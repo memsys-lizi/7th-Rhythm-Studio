@@ -1,0 +1,320 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import TitleBar from "./components/TitleBar"
+import Sidebar from "./components/Sidebar"
+import HomePage from "./pages/HomePage"
+import ToolsPage from "./pages/ToolsPage"
+import SettingsPage from "./pages/SettingsPage"
+import CommunityPage from "./pages/CommunityPage"
+import OnlineToolsPage from "./pages/OnlineToolsPage"
+import DownloadPanel from "./components/DownloadPanel"
+import { navigateIFrame } from "./components/IFrame"
+import i18n, { t } from "./utils/i18n"
+import GetAppIcon from "@material-ui/icons/GetApp"
+import "./App.css"
+
+function compareVersions(version1, version2) {
+const v1 = version1.split('.').map(Number);
+const v2 = version2.split('.').map(Number);
+for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+const num1 = v1[i] || 0;
+const num2 = v2[i] || 0;
+if (num1 > num2) return 1;
+if (num1 < num2) return -1;
+}
+return 0;
+}
+
+function App() {
+  const [currentTime, setCurrentTime] = useState(new Date())
+  const [activeTab, setActiveTab] = useState("home") // 当前激活的标签页
+  const [downloads, setDownloads] = useState([]) // 下载列表
+  const [showDownloads, setShowDownloads] = useState(false) // 是否显示下载面板
+  const [language, setLanguage] = useState(i18n.getCurrentLanguage())
+  const [updateInfo, setUpdateInfo] = useState(null) // 更新信息
+
+  // 监听语言变化
+  useEffect(() => {
+    const handleLanguageChange = (event) => {
+      setLanguage(event.detail.language)
+    }
+
+    window.addEventListener("languageChanged", handleLanguageChange)
+    return () => {
+      window.removeEventListener("languageChanged", handleLanguageChange)
+    }
+  }, [])
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  // 检查更新
+  useEffect(() => {
+    const checkForUpdates = async () => {
+      try {
+        if (window.electronAPI) {
+          const response = await window.electronAPI.fetch("https://adofaitools.top/api/check_update.php")
+          const updateData = JSON.parse(response)
+          
+          // 这里可以比较版本号，决定是否显示更新提示
+          // 当前版本在package.json中定义，这里简化处理
+          const currentVersion = "1.9.0" // 从package.json获取
+          if (compareVersions(currentVersion,updateData.version) == -1) {
+            setUpdateInfo(updateData)
+            console.log("发现新版本:", updateData.version)
+          }
+        }
+      } catch (error) {
+        console.log("检查更新失败:", error)
+        // 不阻塞应用启动，静默失败
+      }
+    }
+
+    // 延迟检查更新，不阻塞应用启动
+    setTimeout(checkForUpdates, 2000)
+  }, [])
+
+  const formatTime = (date) => {
+    return date.toLocaleString(language, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    })
+  }
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId)
+    console.log("切换到标签页:", tabId)
+  }
+
+  // 导航控制函数 - 直接调用 IFrame 组件的 API
+  const handleNavigate = (action) => {
+    const success = navigateIFrame(action)
+    if (success) {
+      console.log(`导航操作 ${action} 执行成功`)
+    } else {
+      console.log(`导航操作 ${action} 执行失败`)
+    }
+  }
+
+  // 开始下载
+  const startDownload = (tool) => {
+    const downloadId = Date.now().toString()
+    const newDownload = {
+      id: downloadId,
+      tool,
+      progress: 0,
+      status: "downloading", // downloading, paused, completed, error
+      speed: 0,
+      downloaded: 0,
+      total: 0,
+      error: null,
+    }
+
+    setDownloads((prev) => [...prev, newDownload])
+
+    // 开始实际下载
+    performDownload(downloadId, tool)
+
+    return downloadId
+  }
+
+  // 暂停下载
+  const pauseDownload = (downloadId) => {
+    setDownloads((prev) =>
+      prev.map((download) => (download.id === downloadId ? { ...download, status: "paused" } : download)),
+    )
+
+    // 通知主进程暂停下载
+    if (window.electronAPI) {
+      window.electronAPI.pauseDownload(downloadId)
+    }
+  }
+
+  // 恢复下载
+  const resumeDownload = (downloadId) => {
+    setDownloads((prev) =>
+      prev.map((download) => (download.id === downloadId ? { ...download, status: "downloading" } : download)),
+    )
+
+    // 通知主进程恢复下载
+    if (window.electronAPI) {
+      window.electronAPI.resumeDownload(downloadId)
+    }
+  }
+
+  // 取消下载
+  const cancelDownload = (downloadId) => {
+    setDownloads((prev) => prev.filter((download) => download.id !== downloadId))
+
+    // 通知主进程取消下载
+    if (window.electronAPI) {
+      window.electronAPI.cancelDownload(downloadId)
+    }
+  }
+
+  // 执行下载
+  const performDownload = async (downloadId, tool) => {
+    try {
+      if (!window.electronAPI) {
+        throw new Error("Electron API 不可用")
+      }
+
+      // 清理之前的监听器
+      window.electronAPI.removeAllListeners("download-progress")
+      window.electronAPI.removeAllListeners("download-complete")
+      window.electronAPI.removeAllListeners("download-error")
+
+      // 监听下载进度
+      window.electronAPI.onDownloadProgress((data) => {
+        if (data.downloadId === downloadId) {
+          setDownloads((prev) =>
+            prev.map((download) =>
+              download.id === downloadId
+                ? {
+                    ...download,
+                    progress: data.progress,
+                    speed: data.speed,
+                    downloaded: data.downloaded,
+                    total: data.total,
+                  }
+                : download,
+            ),
+          )
+        }
+      })
+
+      // 监听下载完成
+      window.electronAPI.onDownloadComplete((data) => {
+        if (data.downloadId === downloadId) {
+          setDownloads((prev) =>
+            prev.map((download) =>
+              download.id === downloadId ? { ...download, status: "completed", progress: 100 } : download,
+            ),
+          )
+
+          // 显示成功通知
+          console.log(`下载完成: ${data.filename || tool.name}`)
+        }
+      })
+
+      // 监听下载错误
+      window.electronAPI.onDownloadError((data) => {
+        if (data.downloadId === downloadId) {
+          console.error("下载错误:", data.error)
+
+          setDownloads((prev) =>
+            prev.map((download) =>
+              download.id === downloadId ? { ...download, status: "error", error: data.error } : download,
+            ),
+          )
+        }
+      })
+
+      // 开始下载 - 使用工具ID作为文件名
+      const result = await window.electronAPI.startDownload({
+        downloadId,
+        url: tool.downloadUrl,
+        toolId: tool.id.toString(),
+      })
+
+      if (!result) {
+        throw new Error("下载启动失败")
+      }
+    } catch (error) {
+      console.error("下载失败:", error)
+      setDownloads((prev) =>
+        prev.map((download) =>
+          download.id === downloadId ? { ...download, status: "error", error: error.message } : download,
+        ),
+      )
+    }
+  }
+
+  const renderMainContent = () => {
+    // 根据activeTab渲染不同的内容
+    switch (activeTab) {
+      case "home":
+        return <HomePage />
+      case "tools":
+        return <ToolsPage onStartDownload={startDownload} downloads={downloads} />
+      case "community":
+        return <CommunityPage />
+      case "online_tools":
+        return <OnlineToolsPage />
+      case "settings":
+        return <SettingsPage />
+      default:
+        return <HomePage />
+    }
+  }
+
+  return (
+    <div className="App">
+      <TitleBar onNavigate={handleNavigate} />
+      <div className="app-body">
+        <Sidebar activeTab={activeTab} onTabChange={handleTabChange} />
+        <div className="main-content">{renderMainContent()}</div>
+      </div>
+      {showDownloads && (
+        <DownloadPanel
+          downloads={downloads}
+          onPause={pauseDownload}
+          onResume={resumeDownload}
+          onCancel={cancelDownload}
+          onClose={() => setShowDownloads(false)}
+        />
+      )}
+      {downloads.length > 0 && (
+        <button
+          className="download-toggle-btn"
+          onClick={() => setShowDownloads(!showDownloads)}
+          title={t("download.downloadManager")}
+        >
+          <span className="download-count">{downloads.length}</span>
+          <GetAppIcon />
+        </button>
+      )}
+      
+      {/* 更新提示 */}
+      {updateInfo && (
+        <div className="update-notification">
+          <div className="update-content">
+            <h4>{t("update.newVersionAvailable")}</h4>
+            <p>{t("update.version")}: {updateInfo.version}</p>
+            <div className="update-actions">
+              <button 
+                className="update-btn"
+                onClick={() => {
+                  if (window.electronAPI && window.electronAPI.openExternal) {
+                    window.electronAPI.openExternal(updateInfo.downloadUrl[0].win || updateInfo.downloadUrl[0].mac)
+                  }
+                }}
+              >
+                {t("update.download")}
+              </button>
+              <button 
+                className="dismiss-btn"
+                onClick={() => setUpdateInfo(null)}
+              >
+                {t("update.dismiss")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default App

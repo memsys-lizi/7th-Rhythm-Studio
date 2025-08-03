@@ -1,0 +1,221 @@
+.titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-secondary));
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 8px;
+  user-select: none;
+  -webkit-app-region: drag;
+  position: relative;
+  z-index: 1000;
+  box-shadow: 0 1px 3px var(--shadow-color);
+}
+
+.titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.app-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navigation-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  -webkit-app-region: no-drag;
+  margin-left: 8px;
+}
+
+.app-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: brightness(1.1);
+}
+
+.app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.app-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-shadow: 0 1px 2px var(--shadow-color);
+  letter-spacing: 0.5px;
+}
+
+.titlebar-right {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-button {
+  width: 46px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+  outline: none;
+}
+
+.titlebar-button:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.titlebar-button:active {
+  background: var(--bg-quaternary);
+  transform: scale(0.95);
+}
+
+.navigation-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  outline: none;
+  border: 1px solid var(--border-color);
+}
+
+.navigation-button:hover {
+  background: var(--bg-quaternary);
+  color: var(--text-primary);
+  border-color: var(--border-color-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.navigation-button:active {
+  background: var(--bg-tertiary);
+  transform: translateY(0);
+  box-shadow: 0 1px 4px var(--shadow-color);
+}
+
+.navigation-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.navigation-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.navigation-button svg {
+  transition: all 0.2s ease;
+}
+
+.navigation-button:hover svg {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 2px currentColor);
+}
+
+.navigation-button:active svg {
+  transform: scale(0.9);
+}
+
+.minimize-button:hover {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffca28;
+}
+
+.minimize-button:active {
+  background: rgba(255, 193, 7, 0.25);
+}
+
+.maximize-button:hover {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.maximize-button:active {
+  background: rgba(76, 175, 80, 0.25);
+}
+
+.close-button:hover {
+  background: rgba(244, 67, 54, 0.85);
+  color: #ffffff;
+}
+
+.close-button:active {
+  background: rgba(244, 67, 54, 1);
+}
+
+/* 图标动画效果 */
+.titlebar-button svg {
+  transition: all 0.2s ease;
+}
+
+.titlebar-button:hover svg {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 2px currentColor);
+}
+
+.titlebar-button:active svg {
+  transform: scale(0.9);
+}
+
+/* 暗色主题特殊效果 */
+.titlebar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .titlebar {
+    height: 28px;
+    padding: 0 6px;
+  }
+
+  .titlebar-button {
+    width: 40px;
+    height: 28px;
+  }
+
+  .app-title {
+    font-size: 12px;
+  }
+
+  .app-icon {
+    width: 16px;
+    height: 16px;
+  }
+}

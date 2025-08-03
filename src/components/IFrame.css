@@ -1,0 +1,204 @@
+:root {
+  --bg-secondary: #1a1a1a;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --accent-color: #667eea;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --error-color: #ff6b6b;
+  --text-tertiary: rgba(255, 255, 255, 0.6);
+}
+
+.iframe-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px var(--shadow-color);
+  border: 1px solid var(--border-color);
+}
+
+/* 首页专用的无边距样式 */
+.iframe-container.homepage-iframe {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+}
+
+.iframe-element {
+  border: none;
+  outline: none;
+  border-radius: 12px;
+  transition: opacity 0.3s ease;
+}
+
+/* 首页专用的无边距样式 */
+.iframe-container.homepage-iframe .iframe-element {
+  border-radius: 0;
+}
+
+.iframe-element.loading {
+  opacity: 0;
+}
+
+.iframe-element.error {
+  opacity: 0;
+}
+
+/* 加载指示器 */
+.iframe-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  z-index: 10;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--bg-tertiary);
+  border-top: 3px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.iframe-loading span {
+  font-size: 14px;
+  font-weight: 300;
+  text-shadow: 0 1px 3px var(--shadow-color);
+}
+
+/* 错误显示 */
+.iframe-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 40px;
+  z-index: 10;
+}
+
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+.iframe-error h3 {
+  color: var(--error-color);
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+  text-shadow: 0 1px 3px var(--shadow-color);
+}
+
+.iframe-error p {
+  color: var(--text-tertiary);
+  font-size: 14px;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.retry-button {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  outline: none;
+}
+
+.retry-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.retry-button:active {
+  transform: translateY(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .iframe-container {
+    border-radius: 8px;
+  }
+
+  .iframe-element {
+    border-radius: 8px;
+  }
+
+  .iframe-error {
+    padding: 20px;
+  }
+
+  .error-icon {
+    font-size: 36px;
+  }
+
+  .iframe-error h3 {
+    font-size: 18px;
+  }
+
+  .iframe-error p {
+    font-size: 13px;
+  }
+
+  .retry-button {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+/* 暗色主题适配 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-secondary: #0f0f0f;
+    --border-color: rgba(255, 255, 255, 0.05);
+    --bg-tertiary: #1a1a1a;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-tertiary: rgba(255, 255, 255, 0.6);
+  }
+
+  .iframe-container {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+  }
+
+  .iframe-loading,
+  .iframe-error {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  }
+}
