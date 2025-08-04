@@ -32,7 +32,7 @@
   z-index: 1;
 }
 
-.app-logo {
+.updatepage-app-logo {
   width: 64px;
   height: 64px;
   border-radius: 16px;
@@ -135,37 +135,6 @@
   transform: translateY(-1px);
 }
 
-.countdown {
-  margin: 24px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.countdown-circle {
-  width: 60px;
-  height: 60px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  animation: countdown-pulse 1s ease-in-out infinite;
-}
-
-.countdown-number {
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.countdown p {
-  margin: 0;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
 .update-hint {
   margin: 16px 0 0 0;
   font-size: 12px;
@@ -183,49 +152,24 @@
 }
 
 /* 加载动画 */
-.loading-spinner {
+.updatepage-loading-spinner {
   width: 40px;
   height: 40px;
   border: 3px solid rgba(255, 255, 255, 0.3);
   border-top: 3px solid white;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: updatepage-spin 1s linear infinite;
 }
 
-.updating-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-top: 3px solid #4caf50;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
+@keyframes updatepage-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-@keyframes countdown-pulse {
-  0%, 100% { 
-    transform: scale(1);
-    border-color: rgba(255, 255, 255, 0.3);
-  }
-  50% { 
-    transform: scale(1.05);
-    border-color: rgba(255, 255, 255, 0.6);
-  }
 }
 
 /* 状态图标颜色 */
 .update-icon.app-update {
   background: rgba(33, 150, 243, 0.2);
   border: 2px solid rgba(33, 150, 243, 0.4);
-}
-
-.update-icon.hot-update {
-  background: rgba(255, 193, 7, 0.2);
-  border: 2px solid rgba(255, 193, 7, 0.4);
 }
 
 .update-icon.completed {

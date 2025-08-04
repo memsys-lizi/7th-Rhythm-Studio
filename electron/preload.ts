@@ -91,10 +91,18 @@ contextBridge.exposeInMainWorld("electronAPI", {
   selectLanguageFile: () => ipcRenderer.invoke("select-language-file"),
 
   // 更新相关API
-  checkUpdate: () => ipcRenderer.invoke("check-update"),
-  handleAppUpdate: (updateUrl: string) => ipcRenderer.invoke("handle-app-update", updateUrl),
-  startHotupdate: () => ipcRenderer.invoke("start-hotupdate"),
-  finishUpdate: () => ipcRenderer.invoke("finish-update"),
+  checkUpdate: () => {
+    console.log("Calling checkUpdate API...");
+    return ipcRenderer.invoke("check-update");
+  },
+  handleAppUpdate: (updateUrl: string) => {
+    console.log("Calling handleAppUpdate API with URL:", updateUrl);
+    return ipcRenderer.invoke("handle-app-update", updateUrl);
+  },
+  finishUpdate: () => {
+    console.log("Calling finishUpdate API...");
+    return ipcRenderer.invoke("finish-update");
+  },
 })
 
 export default {}

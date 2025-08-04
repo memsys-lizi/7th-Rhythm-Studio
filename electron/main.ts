@@ -75,6 +75,7 @@ function saveDownloadPath(downloadPath: string) {
 
 // 创建更新检查窗口
 function createUpdateWindow() {
+  console.log("Creating update window...");
   updateWin = new BrowserWindow({
     width: 400,
     height: 500,
@@ -87,22 +88,33 @@ function createUpdateWindow() {
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
       nodeIntegration: true,
+      contextIsolation: true, // 确保上下文隔离
     },
   })
 
   if (VITE_DEV_SERVER_URL) {
+    console.log("Loading update page from dev server:", VITE_DEV_SERVER_URL + "/#/update");
     updateWin.loadURL(VITE_DEV_SERVER_URL + "/#/update")
   } else {
-    updateWin.loadFile(path.join(RENDERER_DIST, "index.html"), { hash: "/update" })
+    const updatePath = path.join(RENDERER_DIST, "index.html");
+    console.log("Loading update page from file:", updatePath);
+    updateWin.loadFile(updatePath, { hash: "/update" })
   }
 
   updateWin.once('ready-to-show', () => {
+    console.log("Update window ready to show");
     updateWin?.show()
   })
 
   updateWin.on('closed', () => {
+    console.log("Update window closed");
     updateWin = null
   })
+  
+  // 添加调试信息
+  updateWin.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error("Update window failed to load:", errorCode, errorDescription);
+  });
 }
 
 // 创建主应用窗口
@@ -222,13 +234,23 @@ function compareVersions(version1: string, version2: string): number {
 // 检查更新
 ipcMain.handle("check-update", async () => {
   try {
+    console.log("Starting update check...");
     const response = await net.fetch("https://7th.rhythmdoctor.top/api/check_update.php");
-    const data = JSON.parse(await response.text());
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const responseText = await response.text();
+    console.log("Update API response:", responseText);
+    
+    const data = JSON.parse(responseText);
     
     if (!data.success) {
       throw new Error(data.message || "获取更新信息失败");
     }
     
+    console.log("Update check successful:", data.data);
     return data.data;
   } catch (error: any) {
     console.error("Check update error:", error);
@@ -247,37 +269,6 @@ ipcMain.handle("handle-app-update", async (event, updateUrl) => {
     return true;
   } catch (error) {
     console.error("Handle app update error:", error);
-    return false;
-  }
-});
-
-// 启动热更新
-ipcMain.handle("start-hotupdate", async () => {
-  try {
-    const appPath = app.getAppPath();
-    const appDir = path.dirname(appPath);
-    const updateScriptPath = path.join(appDir, "UpdateScript.exe");
-    
-    // 检查UpdateScript.exe是否存在
-    if (!fs.existsSync(updateScriptPath)) {
-      throw new Error("UpdateScript.exe 未找到");
-    }
-    
-    // 启动更新脚本
-    const { spawn } = require('child_process');
-    spawn(updateScriptPath, [], {
-      detached: true,
-      stdio: 'ignore'
-    });
-    
-    // 等待一秒后退出应用（让UpdateScript.exe有时间启动）
-    setTimeout(() => {
-      app.quit();
-    }, 1000);
-    
-    return true;
-  } catch (error: any) {
-    console.error("Start hotupdate error:", error);
     return false;
   }
 });
