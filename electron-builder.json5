@@ -17,6 +17,16 @@
       "filter": ["**/*.json"]
     }
   ],
+  "extraFiles": [
+    {
+      "from": "Hotupdate/libcurl-x64.dll",
+      "to": "libcurl-x64.dll"
+    },
+    {
+      "from": "Hotupdate/UpdateScript.exe",
+      "to": "UpdateScript.exe"
+    }
+  ],
   "mac": {
     "target": [
       "dmg"

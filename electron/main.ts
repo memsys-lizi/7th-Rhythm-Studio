@@ -27,6 +27,7 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist")
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, "public") : RENDERER_DIST
 
 let win: BrowserWindow | null
+let updateWin: BrowserWindow | null
 declare global {
   var downloadPath: string | null
 }
@@ -72,6 +73,39 @@ function saveDownloadPath(downloadPath: string) {
   }
 }
 
+// 创建更新检查窗口
+function createUpdateWindow() {
+  updateWin = new BrowserWindow({
+    width: 400,
+    height: 500,
+    resizable: false,
+    frame: false,
+    alwaysOnTop: true,
+    center: true,
+    show: false,
+    icon: path.join(process.env.APP_ROOT, "./electron/icon.png"),
+    webPreferences: {
+      preload: path.join(__dirname, "preload.mjs"),
+      nodeIntegration: true,
+    },
+  })
+
+  if (VITE_DEV_SERVER_URL) {
+    updateWin.loadURL(VITE_DEV_SERVER_URL + "/#/update")
+  } else {
+    updateWin.loadFile(path.join(RENDERER_DIST, "index.html"), { hash: "/update" })
+  }
+
+  updateWin.once('ready-to-show', () => {
+    updateWin?.show()
+  })
+
+  updateWin.on('closed', () => {
+    updateWin = null
+  })
+}
+
+// 创建主应用窗口
 function createWindow() {
   win = new BrowserWindow({
     width: 1920,
@@ -93,7 +127,6 @@ function createWindow() {
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
   } else {
-    // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, "index.html"))
   }
 }
@@ -171,6 +204,101 @@ function getToolDownloadPath(toolId: string): string {
 ipcMain.handle("fetch", async (_event, ...args: [string, RequestInit?]) => {
   const resp = await net.fetch(...args);
   return resp.text();
+});
+
+// 版本比较函数
+function compareVersions(version1: string, version2: string): number {
+  const v1 = version1.split('.').map(Number);
+  const v2 = version2.split('.').map(Number);
+  for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+    const num1 = v1[i] || 0;
+    const num2 = v2[i] || 0;
+    if (num1 > num2) return 1;
+    if (num1 < num2) return -1;
+  }
+  return 0;
+}
+
+// 检查更新
+ipcMain.handle("check-update", async () => {
+  try {
+    const response = await net.fetch("https://7th.rhythmdoctor.top/api/check_update.php");
+    const data = JSON.parse(await response.text());
+    
+    if (!data.success) {
+      throw new Error(data.message || "获取更新信息失败");
+    }
+    
+    return data.data;
+  } catch (error: any) {
+    console.error("Check update error:", error);
+    throw error;
+  }
+});
+
+// 处理软件更新（打开浏览器）
+ipcMain.handle("handle-app-update", async (event, updateUrl) => {
+  try {
+    await shell.openExternal(updateUrl);
+    // 打开浏览器后退出应用
+    setTimeout(() => {
+      app.quit();
+    }, 1000);
+    return true;
+  } catch (error) {
+    console.error("Handle app update error:", error);
+    return false;
+  }
+});
+
+// 启动热更新
+ipcMain.handle("start-hotupdate", async () => {
+  try {
+    const appPath = app.getAppPath();
+    const appDir = path.dirname(appPath);
+    const updateScriptPath = path.join(appDir, "UpdateScript.exe");
+    
+    // 检查UpdateScript.exe是否存在
+    if (!fs.existsSync(updateScriptPath)) {
+      throw new Error("UpdateScript.exe 未找到");
+    }
+    
+    // 启动更新脚本
+    const { spawn } = require('child_process');
+    spawn(updateScriptPath, [], {
+      detached: true,
+      stdio: 'ignore'
+    });
+    
+    // 等待一秒后退出应用（让UpdateScript.exe有时间启动）
+    setTimeout(() => {
+      app.quit();
+    }, 1000);
+    
+    return true;
+  } catch (error: any) {
+    console.error("Start hotupdate error:", error);
+    return false;
+  }
+});
+
+// 完成更新，启动主应用
+ipcMain.handle("finish-update", async () => {
+  try {
+    // 关闭更新窗口
+    if (updateWin) {
+      updateWin.close();
+      updateWin = null;
+    }
+    
+    // 创建主应用窗口
+    createWindow();
+    
+    return true;
+  } catch (error) {
+    console.error("Finish update error:", error);
+    return false;
+  }
 });
 
 ipcMain.handle("open-external", async (event, url) => {
@@ -766,6 +894,7 @@ app.on("activate", () => {
 
 app.whenReady().then(() => {
   initDownloadPath()
-  createWindow()
+  // 先创建更新窗口而不是主窗口
+  createUpdateWindow()
 })
 app.commandLine.appendSwitch("enable-features", "WebView")

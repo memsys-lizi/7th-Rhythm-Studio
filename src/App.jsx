@@ -9,6 +9,7 @@ import SettingsPage from "./pages/SettingsPage"
 import CommunityPage from "./pages/CommunityPage"
 import OnlineToolsPage from "./pages/OnlineToolsPage"
 import DevPage from "./pages/Dev"
+import UpdatePage from "./pages/UpdatePage"
 import DownloadPanel from "./components/DownloadPanel"
 import { navigateIFrame } from "./components/IFrame"
 import i18n, { t } from "./utils/i18n"
@@ -17,25 +18,25 @@ import VersionManager from './utils/VersionManager'
 
 import "./App.css"
 
-function compareVersions(version1, version2) {
-const v1 = version1.split('.').map(Number);
-const v2 = version2.split('.').map(Number);
-for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
-const num1 = v1[i] || 0;
-const num2 = v2[i] || 0;
-if (num1 > num2) return 1;
-if (num1 < num2) return -1;
-}
-return 0;
-}
-
 function App() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [activeTab, setActiveTab] = useState("home") // 当前激活的标签页
   const [downloads, setDownloads] = useState([]) // 下载列表
   const [showDownloads, setShowDownloads] = useState(false) // 是否显示下载面板
   const [language, setLanguage] = useState(i18n.getCurrentLanguage())
-  const [updateInfo, setUpdateInfo] = useState(null) // 更新信息
+  const [currentRoute, setCurrentRoute] = useState(window.location.hash.replace('#', '') || 'main')
+
+  // 监听路由变化
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentRoute(window.location.hash.replace('#', '') || 'main')
+    }
+    
+    window.addEventListener('hashchange', handleHashChange)
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange)
+    }
+  }, [])
 
   // 监听语言变化
   useEffect(() => {
@@ -57,31 +58,7 @@ function App() {
     return () => clearInterval(timer)
   }, [])
 
-  // 检查更新
-  useEffect(() => {
-    const checkForUpdates = async () => {
-      try {
-        if (window.electronAPI) {
-          const response = await window.electronAPI.fetch("https://adofaitools.top/api/check_update.php")
-          const updateData = JSON.parse(response)
-          
-          // 这里可以比较版本号，决定是否显示更新提示
-          // 当前版本在package.json中定义，这里简化处理
-          const currentVersion = VersionManager.version // 从package.json获取
-          if (compareVersions(currentVersion,updateData.version) == -1) {
-            setUpdateInfo(updateData)
-            console.log("发现新版本:", updateData.version)
-          }
-        }
-      } catch (error) {
-        console.log("检查更新失败:", error)
-        // 不阻塞应用启动，静默失败
-      }
-    }
 
-    // 延迟检查更新，不阻塞应用启动
-    setTimeout(checkForUpdates, 2000)
-  }, [])
 
   const formatTime = (date) => {
     return date.toLocaleString(language, {
@@ -280,6 +257,11 @@ function App() {
     }
   }
 
+  // 如果是更新页面，只渲染更新组件
+  if (currentRoute === '/update' || currentRoute === 'update') {
+    return <UpdatePage />
+  }
+
   return (
     <div className="App">
       <TitleBar onNavigate={handleNavigate} />
@@ -306,34 +288,7 @@ function App() {
           <GetAppIcon />
         </button>
       )}
-      
-      {/* 更新提示 */}
-      {updateInfo && (
-        <div className="update-notification">
-          <div className="update-content">
-            <h4>{t("update.newVersionAvailable")}</h4>
-            <p>{t("update.version")}: {updateInfo.version}</p>
-            <div className="update-actions">
-              <button 
-                className="update-btn"
-                onClick={() => {
-                  if (window.electronAPI && window.electronAPI.openExternal) {
-                    window.electronAPI.openExternal(updateInfo.downloadUrl[0].win || updateInfo.downloadUrl[0].mac)
-                  }
-                }}
-              >
-                {t("update.download")}
-              </button>
-              <button 
-                className="dismiss-btn"
-                onClick={() => setUpdateInfo(null)}
-              >
-                {t("update.dismiss")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   )
 }

@@ -89,6 +89,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
   importLanguageFile: (filePath: string, languageCode: string) => ipcRenderer.invoke("import-language-file", filePath, languageCode),
   deleteExternalLanguage: (language: string) => ipcRenderer.invoke("delete-external-language", language),
   selectLanguageFile: () => ipcRenderer.invoke("select-language-file"),
+
+  // 更新相关API
+  checkUpdate: () => ipcRenderer.invoke("check-update"),
+  handleAppUpdate: (updateUrl: string) => ipcRenderer.invoke("handle-app-update", updateUrl),
+  startHotupdate: () => ipcRenderer.invoke("start-hotupdate"),
+  finishUpdate: () => ipcRenderer.invoke("finish-update"),
 })
 
 export default {}

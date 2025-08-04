@@ -1,5 +1,32 @@
-const VersionManager = {
-    version: "1.9.0"
+const appVersion = "1.0.0"
+const asarVersion = "1.0.0"
+
+// 版本比较函数
+function compareVersions(version1, version2) {
+  const v1 = version1.split('.').map(Number);
+  const v2 = version2.split('.').map(Number);
+  for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+    const num1 = v1[i] || 0;
+    const num2 = v2[i] || 0;
+    if (num1 > num2) return 1;
+    if (num1 < num2) return -1;
+  }
+  return 0;
 }
 
-export default VersionManager
+export default {
+  version: appVersion, // 兼容旧的命名
+  appVersion,
+  asarVersion,
+  compareVersions,
+  
+  // 检查是否需要软件更新
+  needsAppUpdate(remoteVersion) {
+    return compareVersions(appVersion, remoteVersion) < 0;
+  },
+  
+  // 检查是否需要热更新
+  needsHotUpdate(remoteVersion) {
+    return compareVersions(asarVersion, remoteVersion) < 0;
+  }
+}
