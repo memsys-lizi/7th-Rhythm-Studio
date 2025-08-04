@@ -76,9 +76,9 @@ const TitleBar = ({ onNavigate }) => {
   return (
     <div className="titlebar">
       <div className="titlebar-left">
-        <div className="app-info">
+        <div className="titlebar-app-info">
           <div className="app-icon">{/*<img src="./assets/icon/icon.png" alt="ADOFAI Tools" />*/}</div>
-          <div className="app-title">{t("app.title")}</div>
+          <div className="titlebar-app-title">{t("app.title")}</div>
         </div>
 
         <div className="navigation-buttons">

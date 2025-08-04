@@ -159,7 +159,10 @@
         "title": "开发工具",
         "description": "访问开发者工具和调试功能"
       }
-    }
+    },
+    "updateLogs": "更新日志",
+    "loadingLogs": "正在加载更新日志...",
+    "noLogs": "暂无更新日志"
   },
   "messages": {
     "downloadStarted": "开始下载",

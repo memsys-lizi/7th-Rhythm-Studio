@@ -11,6 +11,8 @@ import './HomePage.css';
 const HomePage = ({ onNavigate }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [language, setLanguage] = useState(i18n.getCurrentLanguage());
+  const [updateLogs, setUpdateLogs] = useState([]);
+  const [logsLoading, setLogsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -18,6 +20,29 @@ const HomePage = ({ onNavigate }) => {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  // 获取更新日志
+  useEffect(() => {
+    const fetchUpdateLogs = async () => {
+      try {
+        setLogsLoading(true);
+        let response;
+        if (window.electronAPI) {
+          response = await window.electronAPI.fetch("https://7th.rhythmdoctor.top/api/get_updatelog.php");
+          const data = JSON.parse(response);
+          if (data.success && data.data && data.data.updates) {
+            setUpdateLogs(data.data.updates);
+          }
+        }
+      } catch (error) {
+        console.log("获取更新日志失败:", error);
+      } finally {
+        setLogsLoading(false);
+      }
+    };
+
+    fetchUpdateLogs();
   }, []);
 
   // 监听语言变化
@@ -87,7 +112,9 @@ const HomePage = ({ onNavigate }) => {
         {/* 欢迎区域 */}
         <div className="welcome-section">
           <div className="app-logo">
-            <div className="logo-icon">🎵</div>
+            <div className="logo-icon">
+              <img src="https://7th.rhythmdoctor.top/Resource/icon.png" alt="7th Rhythm Studio" />
+            </div>
             <h1 className="app-title">7th Rhythm Studio</h1>
           </div>
           <p className="app-description">
@@ -100,27 +127,56 @@ const HomePage = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* 快速操作区域 */}
-        <div className="quick-actions-section">
-          <h2 className="section-title">{t('home.quickStart') || '快速开始'}</h2>
-          <div className="quick-actions-grid">
-            {quickActions.map((action) => (
-              <div
-                key={action.id}
-                className="quick-action-card"
-                onClick={() => handleQuickAction(action.id)}
-                style={{ '--card-color': action.color }}
-              >
-                <div className="card-icon">
-                  {action.icon}
+        {/* 主要内容区域 */}
+        <div className="main-sections">
+          {/* 快速操作区域 */}
+          <div className="quick-actions-section">
+            <h2 className="section-title">{t('home.quickStart') || '快速开始'}</h2>
+            <div className="quick-actions-grid">
+              {quickActions.map((action) => (
+                <div
+                  key={action.id}
+                  className="quick-action-card"
+                  onClick={() => handleQuickAction(action.id)}
+                  style={{ '--card-color': action.color }}
+                >
+                  <div className="card-icon">
+                    {action.icon}
+                  </div>
+                  <div className="card-content">
+                    <h3 className="card-title">{action.title}</h3>
+                    <p className="card-description">{action.description}</p>
+                  </div>
+                  <div className="card-arrow">→</div>
                 </div>
-                <div className="card-content">
-                  <h3 className="card-title">{action.title}</h3>
-                  <p className="card-description">{action.description}</p>
+              ))}
+            </div>
+          </div>
+
+          {/* 更新日志区域 */}
+          <div className="update-logs-section">
+            <h2 className="section-title">{t('home.updateLogs') || '更新日志'}</h2>
+            <div className="update-logs-container">
+              {logsLoading ? (
+                <div className="logs-loading">
+                  <div className="loading-spinner"></div>
+                  <p>{t('home.loadingLogs') || '正在加载更新日志...'}</p>
                 </div>
-                <div className="card-arrow">→</div>
-              </div>
-            ))}
+              ) : updateLogs.length > 0 ? (
+                <div className="update-logs-list">
+                  {updateLogs.map((log, index) => (
+                    <div key={index} className="update-log-item">
+                      <h3 className="log-title">{log.title}</h3>
+                      <p className="log-content">{log.content}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-logs">
+                  <p>{t('home.noLogs') || '暂无更新日志'}</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

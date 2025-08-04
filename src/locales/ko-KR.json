@@ -159,7 +159,10 @@
         "title": "개발자 도구",
         "description": "개발자 도구 및 디버깅 기능에 액세스"
       }
-    }
+    },
+    "updateLogs": "업데이트 로그",
+    "loadingLogs": "업데이트 로그를 불러오는 중...",
+    "noLogs": "사용 가능한 업데이트 로그가 없습니다"
   },
   "messages": {
     "downloadStarted": "다운로드 시작",

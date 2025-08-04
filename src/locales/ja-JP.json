@@ -159,7 +159,10 @@
         "title": "開発ツール",
         "description": "開発ツールとデバッグ機能にアクセス"
       }
-    }
+    },
+    "updateLogs": "更新ログ",
+    "loadingLogs": "更新ログを読み込み中...",
+    "noLogs": "更新ログがありません"
   },
   "messages": {
     "downloadStarted": "ダウンロード開始",
