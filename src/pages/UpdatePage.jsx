@@ -17,6 +17,7 @@ const UpdatePage = () => {
   const [message, setMessage] = useState('正在检查更新...');
   const [updateInfo, setUpdateInfo] = useState(null);
   const [error, setError] = useState(null);
+  const [isForceUpdate, setIsForceUpdate] = useState(false);
 
   useEffect(() => {
     console.log('UpdatePage mounted');
@@ -46,17 +47,25 @@ const UpdatePage = () => {
 
       const platform = getPlatform();
       const needsAppUpdate = VersionManager.needsAppUpdate(updateData.version);
+      const forceUpdate = updateData.min_version ? VersionManager.needsForceUpdate(updateData.min_version) : false;
 
       console.log('Version check:', {
         current: { app: VersionManager.appVersion },
-        remote: { app: updateData.version },
-        needsAppUpdate
+        remote: { app: updateData.version, minVersion: updateData.min_version },
+        needsAppUpdate,
+        forceUpdate
       });
 
       if (needsAppUpdate) {
         // 需要软件更新
         setStatus('app-update');
-        setMessage(`发现新版本 ${updateData.version}`);
+        setIsForceUpdate(forceUpdate);
+        
+        if (forceUpdate) {
+          setMessage(`发现新版本 ${updateData.version}（强制更新）`);
+        } else {
+          setMessage(`发现新版本 ${updateData.version}`);
+        }
       } else {
         // 无更新
         setStatus('completed');
@@ -121,18 +130,25 @@ const UpdatePage = () => {
         return (
           <div className="update-content">
             <div className="update-icon app-update">📦</div>
-            <h2>发现新版本</h2>
+            <h2>{isForceUpdate ? '强制更新' : '发现新版本'}</h2>
             <p className="update-message">{message}</p>
             <p className="version-info">
               {VersionManager.appVersion} → {updateInfo?.version}
             </p>
+            {isForceUpdate && (
+              <p className="force-update-notice">
+                ⚠️ 当前版本过低，必须更新后才能继续使用
+              </p>
+            )}
             <div className="update-actions">
               <button className="update-btn primary" onClick={handleAppUpdate}>
-                立即下载
+                {isForceUpdate ? '立即更新' : '立即下载'}
               </button>
-              <button className="update-btn secondary" onClick={finishUpdate}>
-                稍后更新
-              </button>
+              {!isForceUpdate && (
+                <button className="update-btn secondary" onClick={finishUpdate}>
+                  稍后更新
+                </button>
+              )}
             </div>
           </div>
         );

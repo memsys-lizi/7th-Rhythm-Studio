@@ -28,5 +28,10 @@ export default {
   // 检查是否需要热更新
   needsHotUpdate(remoteVersion) {
     return compareVersions(asarVersion, remoteVersion) < 0;
+  },
+  
+  // 检查是否需要强制更新（基于最低支持版本）
+  needsForceUpdate(minVersion) {
+    return compareVersions(appVersion, minVersion) < 0;
   }
 }

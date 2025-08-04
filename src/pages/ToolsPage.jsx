@@ -41,7 +41,7 @@ const ToolsPage = ({ onStartDownload, downloads }) => {
     const fetchTools = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://adofaitools.top/api/get_tools.php")
+        const response = await fetch("https://7th.rhythmdoctor.top/api/tools/get_tools.php")
         if (!response.ok) {
           throw new Error(t("tools.loadFailed"))
         }
