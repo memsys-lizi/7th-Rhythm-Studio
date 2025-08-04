@@ -137,6 +137,30 @@
     "title": "开发者控制台",
     "description": "访问开发者工具和调试功能"
   },
+  "home": {
+    "welcome": "欢迎使用",
+    "description": "节奏游戏工具集合，为ADOFAI等节奏游戏提供丰富的工具和资源",
+    "quickStart": "快速开始",
+    "developedBy": "由 lizi & Xbodw 开发维护",
+    "actions": {
+      "tools": {
+        "title": "浏览工具",
+        "description": "浏览和下载节奏游戏工具"
+      },
+      "onlineTools": {
+        "title": "在线工具",
+        "description": "使用在线工具和服务"
+      },
+      "community": {
+        "title": "探索社区",
+        "description": "探索社区资源和内容"
+      },
+      "developer": {
+        "title": "开发工具",
+        "description": "访问开发者工具和调试功能"
+      }
+    }
+  },
   "messages": {
     "downloadStarted": "开始下载",
     "downloadCompleted": "下载完成",

@@ -367,7 +367,7 @@ const SettingsPage = () => {
                 <strong><MusicNoteIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> 7BG Rhythm Studio</strong>
               </p>
               <p><GetAppIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {t("settings.version")}: {VersionManager.version}</p>
-              <p><PersonIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {t("settings.developer")}: lizi & XBodw</p>
+              <p><PersonIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {t("settings.developer")}: lizi & XBodw & StArray(hotupdate)</p>
               <p><BuildIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> Powered by Electron + Vite + React</p>
           </div>
         </div>

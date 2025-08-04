@@ -264,7 +264,7 @@ function App() {
     // 根据activeTab渲染不同的内容
     switch (activeTab) {
       case "home":
-        return <HomePage />
+        return <HomePage onNavigate={handleTabChange} />
       case "tools":
         return <ToolsPage onStartDownload={startDownload} downloads={downloads} />
       case "community":
@@ -276,7 +276,7 @@ function App() {
       case "settings":
         return <SettingsPage />
       default:
-        return <HomePage />
+        return <HomePage onNavigate={handleTabChange} />
     }
   }
 

@@ -137,6 +137,30 @@
     "title": "開発者コンソール",
     "description": "開発ツールとデバッグ機能にアクセス"
   },
+  "home": {
+    "welcome": "ようこそ",
+    "description": "ADOFAIなどのリズムゲーム用の包括的なツールコレクション",
+    "quickStart": "クイックスタート",
+    "developedBy": "lizi & Xbodw により開発・保守",
+    "actions": {
+      "tools": {
+        "title": "ツールを閲覧",
+        "description": "リズムゲームツールを閲覧・ダウンロード"
+      },
+      "onlineTools": {
+        "title": "オンラインツール",
+        "description": "オンラインツールとサービスを使用"
+      },
+      "community": {
+        "title": "コミュニティを探索",
+        "description": "コミュニティのリソースとコンテンツを探索"
+      },
+      "developer": {
+        "title": "開発ツール",
+        "description": "開発ツールとデバッグ機能にアクセス"
+      }
+    }
+  },
   "messages": {
     "downloadStarted": "ダウンロード開始",
     "downloadCompleted": "ダウンロード完了",

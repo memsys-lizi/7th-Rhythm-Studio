@@ -137,6 +137,30 @@
     "title": "Developer Console",
     "description": "Access developer tools and debugging features"
   },
+  "home": {
+    "welcome": "Welcome to",
+    "description": "A comprehensive collection of rhythm game tools for ADOFAI and other rhythm games",
+    "quickStart": "Quick Start",
+    "developedBy": "Developed and maintained by lizi & Xbodw",
+    "actions": {
+      "tools": {
+        "title": "Browse Tools",
+        "description": "Browse and download rhythm game tools"
+      },
+      "onlineTools": {
+        "title": "Online Tools",
+        "description": "Use online tools and services"
+      },
+      "community": {
+        "title": "Explore Community",
+        "description": "Explore community resources and content"
+      },
+      "developer": {
+        "title": "Developer Tools",
+        "description": "Access developer tools and debugging features"
+      }
+    }
+  },
   "messages": {
     "downloadStarted": "Download started",
     "downloadCompleted": "Download completed",

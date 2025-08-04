@@ -137,6 +137,30 @@
     "title": "개발자 콘솔",
     "description": "개발자 도구 및 디버깅 기능에 액세스"
   },
+  "home": {
+    "welcome": "환영합니다",
+    "description": "ADOFAI 및 기타 리듬 게임을 위한 포괄적인 도구 모음",
+    "quickStart": "빠른 시작",
+    "developedBy": "lizi & Xbodw가 개발 및 유지 관리",
+    "actions": {
+      "tools": {
+        "title": "도구 탐색",
+        "description": "리듬 게임 도구 탐색 및 다운로드"
+      },
+      "onlineTools": {
+        "title": "온라인 도구",
+        "description": "온라인 도구 및 서비스 사용"
+      },
+      "community": {
+        "title": "커뮤니티 탐색",
+        "description": "커뮤니티 리소스 및 콘텐츠 탐색"
+      },
+      "developer": {
+        "title": "개발자 도구",
+        "description": "개발자 도구 및 디버깅 기능에 액세스"
+      }
+    }
+  },
   "messages": {
     "downloadStarted": "다운로드 시작",
     "downloadCompleted": "다운로드 완료",
