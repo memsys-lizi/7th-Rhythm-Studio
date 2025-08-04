@@ -8,6 +8,7 @@ import ToolsPage from "./pages/ToolsPage"
 import SettingsPage from "./pages/SettingsPage"
 import CommunityPage from "./pages/CommunityPage"
 import OnlineToolsPage from "./pages/OnlineToolsPage"
+import DevPage from "./pages/Dev"
 import DownloadPanel from "./components/DownloadPanel"
 import { navigateIFrame } from "./components/IFrame"
 import i18n, { t } from "./utils/i18n"
@@ -270,6 +271,8 @@ function App() {
         return <CommunityPage />
       case "online_tools":
         return <OnlineToolsPage />
+      case "developer":
+        return <DevPage />
       case "settings":
         return <SettingsPage />
       default:

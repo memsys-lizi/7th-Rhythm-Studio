@@ -34,7 +34,9 @@
     "home": "홈",
     "tools": "도구",
     "settings": "설정",
-    "community": "커뮤니티"
+    "community": "커뮤니티",
+    "onlinetools": "온라인 도구",
+    "developer": "개발자 콘솔"
   },
   "tools": {
     "toolsList": "도구 목록",
@@ -130,6 +132,10 @@
     "download": "지금 다운로드",
     "dismiss": "나중에 알림",
     "changelog": "변경 로그"
+  },
+  "developer": {
+    "title": "개발자 콘솔",
+    "description": "개발자 도구 및 디버깅 기능에 액세스"
   },
   "messages": {
     "downloadStarted": "다운로드 시작",

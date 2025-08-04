@@ -35,7 +35,8 @@
     "tools": "工具",
     "settings": "设置",
     "community": "社区",
-    "onlinetools": "在线工具"
+    "onlinetools": "在线工具",
+    "developer": "开发者控制台"
   },
   "tools": {
     "toolsList": "工具列表",
@@ -131,6 +132,10 @@
     "download": "立即下载",
     "dismiss": "稍后提醒",
     "changelog": "更新日志"
+  },
+  "developer": {
+    "title": "开发者控制台",
+    "description": "访问开发者工具和调试功能"
   },
   "messages": {
     "downloadStarted": "开始下载",

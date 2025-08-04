@@ -35,7 +35,8 @@
     "tools": "ツール",
     "settings": "設定",
     "community": "コミュニティ",
-    "onlinetools": "Online Tools"
+    "onlinetools": "オンラインツール",
+    "developer": "開発者コンソール"
   },
   "tools": {
     "toolsList": "ツールリスト",
@@ -131,6 +132,10 @@
     "download": "今すぐダウンロード",
     "dismiss": "後で通知",
     "changelog": "変更履歴"
+  },
+  "developer": {
+    "title": "開発者コンソール",
+    "description": "開発ツールとデバッグ機能にアクセス"
   },
   "messages": {
     "downloadStarted": "ダウンロード開始",

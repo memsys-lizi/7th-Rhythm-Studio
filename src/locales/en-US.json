@@ -35,7 +35,8 @@
     "tools": "Tools",
     "settings": "Settings",
     "community": "Community",
-    "onlinetools": "Online Tools"
+    "onlinetools": "Online Tools",
+    "developer": "Developer Console"
   },
   "tools": {
     "toolsList": "Tools List",
@@ -131,6 +132,10 @@
     "download": "Download Now",
     "dismiss": "Remind Later",
     "changelog": "Changelog"
+  },
+  "developer": {
+    "title": "Developer Console",
+    "description": "Access developer tools and debugging features"
   },
   "messages": {
     "downloadStarted": "Download started",

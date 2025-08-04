@@ -6,6 +6,7 @@ import AppsIcon from "@material-ui/icons/Apps"
 import SettingsIcon from "@material-ui/icons/Settings"
 import ForumIcon from "@material-ui/icons/Forum"
 import TollIcon from '@material-ui/icons/Toll';
+import DeveloperModeIcon from '@material-ui/icons/DeveloperMode';
 import i18n, { t } from "../utils/i18n"
 import themeManager from "../utils/theme"
 import "./Sidebar.css"
@@ -71,6 +72,14 @@ const Sidebar = ({ activeTab, onTabChange }) => {
     },
   ]
 
+  // 开发者控制台按钮
+  const developerItem = {
+    id: "developer",
+    label: t("sidebar.developer") || "开发者控制台",
+    icon: <DeveloperModeIcon style={{ color: getIconColor() }} />,
+    tooltip: t("sidebar.developer") || "开发者控制台",
+  }
+
   // 设置按钮单独处理，放在底部
   const settingsItem = {
     id: "settings",
@@ -112,8 +121,31 @@ const Sidebar = ({ activeTab, onTabChange }) => {
           ))}
         </div>
 
-        {/* 底部设置按钮 */}
+        {/* 底部按钮区域 */}
         <div className="sidebar-footer">
+          {/* 开发者控制台按钮 */}
+          <div
+            className={`sidebar-item ${activeTab === developerItem.id ? "active" : ""}`}
+            onClick={() => handleItemClick(developerItem.id)}
+            onMouseEnter={() => setHoveredItem(developerItem.id)}
+            onMouseLeave={() => setHoveredItem(null)}
+            title={developerItem.tooltip}
+          >
+            <div className="sidebar-icon">
+              {typeof developerItem.icon == "string" ? (
+                <img src={developerItem.icon || "/placeholder.svg"} alt={developerItem.label} />
+              ) : (
+                developerItem.icon
+              )}
+            </div>
+
+            {/* 悬停时显示的工具提示 */}
+            {hoveredItem === developerItem.id && (
+              <div className="sidebar-tooltip">{developerItem.tooltip}</div>
+            )}
+          </div>
+
+          {/* 设置按钮 */}
           <div
             className={`sidebar-item ${activeTab === settingsItem.id ? "active" : ""}`}
             onClick={() => handleItemClick(settingsItem.id)}
