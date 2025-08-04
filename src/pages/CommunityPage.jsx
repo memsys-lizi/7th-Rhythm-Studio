@@ -35,20 +35,34 @@ const CommunityPage = () => {
 
         // 获取社区数据
         if (window.electronAPI) {
-          const communityResponse = await window.electronAPI.fetch("https://adofaitools.top/api/get_community.php")
+          const communityResponse = await window.electronAPI.fetch("https://7th.rhythmdoctor.top/api/community/get_community.php")
           const communityText = await communityResponse
-          const communityJson = JSON.parse(communityText)
-          setCommunityData(communityJson.downloads || [])
+          const communityResult = JSON.parse(communityText)
+          
+          // 检查社区API响应是否成功
+          if (!communityResult.success) {
+            throw new Error(communityResult.message || "获取社区列表失败")
+          }
+          
+          const communityDownloads = communityResult.data?.downloads || []
+          setCommunityData(communityDownloads)
 
           // 获取热门页面数据
-          const hotPagesResponse = await window.electronAPI.fetch("https://adofaitools.top/api/get_hotpages.php")
+          const hotPagesResponse = await window.electronAPI.fetch("https://7th.rhythmdoctor.top/api/hotpages/get_hotpages.php")
           const hotPagesText = await hotPagesResponse
-          const hotPagesJson = JSON.parse(hotPagesText)
-          setHotPages(hotPagesJson || [])
+          const hotPagesResult = JSON.parse(hotPagesText)
+          
+          // 检查热门页面API响应是否成功
+          if (!hotPagesResult.success) {
+            throw new Error(hotPagesResult.message || "获取热门页面失败")
+          }
+          
+          const hotPagesData = hotPagesResult.data || []
+          setHotPages(hotPagesData)
 
           // 默认选中第一个社区网站
-          if (communityJson.downloads && communityJson.downloads.length > 0) {
-            setSelectedSite(communityJson.downloads[0])
+          if (communityDownloads.length > 0) {
+            setSelectedSite(communityDownloads[0])
           }
         } else {
           throw new Error("Electron API not available")

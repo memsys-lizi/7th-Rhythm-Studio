@@ -45,11 +45,19 @@ const ToolsPage = ({ onStartDownload, downloads }) => {
         if (!response.ok) {
           throw new Error(t("tools.loadFailed"))
         }
-        const data = await response.json()
-        setTools(data.tools || [])
+        const result = await response.json()
+        
+        // 检查API响应是否成功
+        if (!result.success) {
+          throw new Error(result.message || t("tools.loadFailed"))
+        }
+        
+        const tools = result.data?.tools || []
+        setTools(tools)
+        
         // 默认选中第一个工具
-        if (data.tools && data.tools.length > 0) {
-          setSelectedTool(data.tools[0])
+        if (tools.length > 0) {
+          setSelectedTool(tools[0])
         }
       } catch (err) {
         setError(err.message)

@@ -35,14 +35,21 @@ const OnlineToolsPage = () => {
 
         // 获取社区数据
         if (window.electronAPI) {
-          const communityResponse = await window.electronAPI.fetch("https://adofaitools.top/api/get_toolsonline.php")
+          const communityResponse = await window.electronAPI.fetch("https://7th.rhythmdoctor.top/api/tools/get_onlinetools.php")
           const communityText = await communityResponse
-          const communityJson = JSON.parse(communityText)
-          setOnlineToolsData(communityJson.downloads || [])
+          const result = JSON.parse(communityText)
+          
+          // 检查API响应是否成功
+          if (!result.success) {
+            throw new Error(result.message || "获取在线工具列表失败")
+          }
+          
+          const downloads = result.data?.downloads || []
+          setOnlineToolsData(downloads)
 
           // 默认选中第一个社区网站
-          if (communityJson.downloads && communityJson.downloads.length > 0) {
-            setSelectedSite(communityJson.downloads[0])
+          if (downloads.length > 0) {
+            setSelectedSite(downloads[0])
           }
         } else {
           throw new Error("Electron API not available")
