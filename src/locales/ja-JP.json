@@ -101,7 +101,18 @@
     "importLanguage": "言語ファイルをインポート",
     "exportLanguage": "言語ファイルをエクスポート",
     "resetSettings": "設定をリセット",
-    "about": "について"
+    "about": "について",
+    "externalLanguageManagement": "外部言語ファイル管理",
+    "refreshLanguages": "言語リストを更新",
+    "deleteLanguageFile": "言語ファイルを削除",
+    "confirmDeleteLanguage": "この言語ファイルを削除してもよろしいですか？",
+    "languageImportSuccess": "言語ファイルのインポートに成功しました",
+    "languageDeleteSuccess": "言語ファイルの削除に成功しました",
+    "onlyDesktopFeature": "この機能はデスクトップアプリでのみ利用可能です",
+    "canOnlyDeleteExternal": "外部言語ファイルのみ削除できます",
+    "version": "バージョン",
+    "developer": "開発者",
+    "builtWith": "構築技術"
   },
   "community": {
     "title": "コミュニティ",

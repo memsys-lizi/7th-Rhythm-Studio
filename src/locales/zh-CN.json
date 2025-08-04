@@ -101,7 +101,18 @@
     "importLanguage": "导入语言文件",
     "exportLanguage": "导出语言文件",
     "resetSettings": "重置设置",
-    "about": "关于"
+    "about": "关于",
+    "externalLanguageManagement": "外部语言文件管理",
+    "refreshLanguages": "刷新语言列表",
+    "deleteLanguageFile": "删除语言文件",
+    "confirmDeleteLanguage": "确定要删除语言文件吗？",
+    "languageImportSuccess": "语言文件导入成功",
+    "languageDeleteSuccess": "语言文件删除成功",
+    "onlyDesktopFeature": "此功能仅在桌面应用中可用",
+    "canOnlyDeleteExternal": "只能删除外部语言文件",
+    "version": "版本",
+    "developer": "开发者",
+    "builtWith": "构建技术"
   },
   "community": {
     "title": "社区",

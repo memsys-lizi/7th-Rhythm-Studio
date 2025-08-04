@@ -12,6 +12,8 @@ import DownloadPanel from "./components/DownloadPanel"
 import { navigateIFrame } from "./components/IFrame"
 import i18n, { t } from "./utils/i18n"
 import GetAppIcon from "@material-ui/icons/GetApp"
+import VersionManager from './utils/VersionManager'
+
 import "./App.css"
 
 function compareVersions(version1, version2) {
@@ -64,7 +66,7 @@ function App() {
           
           // 这里可以比较版本号，决定是否显示更新提示
           // 当前版本在package.json中定义，这里简化处理
-          const currentVersion = "1.9.0" // 从package.json获取
+          const currentVersion = VersionManager.version // 从package.json获取
           if (compareVersions(currentVersion,updateData.version) == -1) {
             setUpdateInfo(updateData)
             console.log("发现新版本:", updateData.version)
@@ -131,11 +133,7 @@ function App() {
 
   // 暂停下载
   const pauseDownload = (downloadId) => {
-    setDownloads((prev) =>
-      prev.map((download) => (download.id === downloadId ? { ...download, status: "paused" } : download)),
-    )
-
-    // 通知主进程暂停下载
+    // 只通知主进程暂停下载，状态更新由主进程事件处理
     if (window.electronAPI) {
       window.electronAPI.pauseDownload(downloadId)
     }
@@ -143,11 +141,7 @@ function App() {
 
   // 恢复下载
   const resumeDownload = (downloadId) => {
-    setDownloads((prev) =>
-      prev.map((download) => (download.id === downloadId ? { ...download, status: "downloading" } : download)),
-    )
-
-    // 通知主进程恢复下载
+    // 只通知主进程恢复下载，状态更新由主进程事件处理
     if (window.electronAPI) {
       window.electronAPI.resumeDownload(downloadId)
     }
@@ -174,6 +168,8 @@ function App() {
       window.electronAPI.removeAllListeners("download-progress")
       window.electronAPI.removeAllListeners("download-complete")
       window.electronAPI.removeAllListeners("download-error")
+      window.electronAPI.removeAllListeners("download-paused")
+      window.electronAPI.removeAllListeners("download-resumed")
 
       // 监听下载进度
       window.electronAPI.onDownloadProgress((data) => {
@@ -216,6 +212,28 @@ function App() {
           setDownloads((prev) =>
             prev.map((download) =>
               download.id === downloadId ? { ...download, status: "error", error: data.error } : download,
+            ),
+          )
+        }
+      })
+
+      // 监听下载暂停
+      window.electronAPI.onDownloadPaused((data) => {
+        if (data.downloadId === downloadId) {
+          setDownloads((prev) =>
+            prev.map((download) =>
+              download.id === downloadId ? { ...download, status: "paused" } : download,
+            ),
+          )
+        }
+      })
+
+      // 监听下载恢复
+      window.electronAPI.onDownloadResumed((data) => {
+        if (data.downloadId === downloadId) {
+          setDownloads((prev) =>
+            prev.map((download) =>
+              download.id === downloadId ? { ...download, status: "downloading" } : download,
             ),
           )
         }

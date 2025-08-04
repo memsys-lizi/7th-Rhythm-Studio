@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, session, shell, net, dialog } from "electron"
+import { app, BrowserWindow, ipcMain, session, shell, net, dialog, screen } from "electron"
 import { createRequire } from "node:module"
 import { fileURLToPath } from "node:url"
 import path from "node:path"
@@ -416,6 +416,10 @@ ipcMain.handle("pause-download", async (event, downloadId) => {
     const downloadItem = downloadTasks.get(downloadId)
     if (downloadItem && !downloadItem.isDestroyed()) {
       downloadItem.pause()
+      
+      // 发送暂停状态更新到前端
+      win?.webContents.send("download-paused", { downloadId })
+      
       return true
     }
     return false
@@ -430,6 +434,7 @@ ipcMain.handle("resume-download", async (event, downloadId) => {
     const downloadItem = downloadTasks.get(downloadId)
     if (downloadItem && !downloadItem.isDestroyed() && downloadItem.canResume()) {
       downloadItem.resume()
+      
       // 重置时间记录，避免暂停时间影响速度计算
       const currentTime = Date.now()
       const lastUpdate = downloadLastUpdate.get(downloadId)
@@ -439,6 +444,10 @@ ipcMain.handle("resume-download", async (event, downloadId) => {
           bytes: lastUpdate.bytes,
         })
       }
+      
+      // 发送恢复状态更新到前端
+      win?.webContents.send("download-resumed", { downloadId })
+      
       return true
     }
     return false
@@ -579,6 +588,161 @@ ipcMain.handle("select-folder", async () => {
   } catch (error: any) {
     console.error("Select folder error:", error)
     return { success: false, error: error.message }
+  }
+})
+
+// 语言文件相关API
+// 获取语言文件目录
+function getLanguagesPath() {
+  const userDataPath = app.getPath('userData')
+  const languagesPath = path.join(userDataPath, 'languages')
+  
+  // 确保目录存在
+  try {
+    if (!fs.existsSync(languagesPath)) {
+      fs.mkdirSync(languagesPath, { recursive: true })
+    }
+  } catch (error) {
+    console.error("Failed to create languages directory:", error)
+  }
+  
+  return languagesPath
+}
+
+// 读取内置语言文件
+ipcMain.handle("read-builtin-language", async (event, language) => {
+  try {
+    // 开发环境和生产环境的路径不同
+    let localesPath: string
+    if (VITE_DEV_SERVER_URL) {
+      // 开发环境
+      localesPath = path.join(process.env.APP_ROOT!, 'src', 'locales')
+    } else {
+      // 生产环境 - locales文件夹在应用程序根目录下
+      localesPath = path.join(process.env.APP_ROOT!, 'locales')
+    }
+    
+    const filePath = path.join(localesPath, `${language}.json`)
+    
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8')
+      return JSON.parse(content)
+    } else {
+      throw new Error(`Language file not found: ${language}`)
+    }
+  } catch (error) {
+    console.error("Read builtin language error:", error)
+    throw error
+  }
+})
+
+// 读取外部语言文件
+ipcMain.handle("read-external-language", async (event, language) => {
+  try {
+    const languagesPath = getLanguagesPath()
+    const filePath = path.join(languagesPath, `${language}.json`)
+    
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8')
+      return JSON.parse(content)
+    } else {
+      throw new Error(`External language file not found: ${language}`)
+    }
+  } catch (error) {
+    console.error("Read external language error:", error)
+    throw error
+  }
+})
+
+// 获取外部语言文件列表
+ipcMain.handle("get-external-languages", async () => {
+  try {
+    const languagesPath = getLanguagesPath()
+    
+    if (!fs.existsSync(languagesPath)) {
+      return []
+    }
+    
+    const files = fs.readdirSync(languagesPath)
+    const languages = files
+      .filter(file => file.endsWith('.json'))
+      .map(file => file.replace('.json', ''))
+    
+    return languages
+  } catch (error) {
+    console.error("Get external languages error:", error)
+    return []
+  }
+})
+
+// 导入语言文件
+ipcMain.handle("import-language-file", async (event, filePath, languageCode) => {
+  try {
+    if (!fs.existsSync(filePath)) {
+      throw new Error("Source file does not exist")
+    }
+    
+    // 验证文件格式
+    const content = fs.readFileSync(filePath, 'utf8')
+    const languageData = JSON.parse(content)
+    
+    // 简单验证：检查是否有必要的键
+    if (!languageData.common || !languageData.app) {
+      throw new Error("Invalid language file format")
+    }
+    
+    const languagesPath = getLanguagesPath()
+    const targetPath = path.join(languagesPath, `${languageCode}.json`)
+    
+    // 复制文件
+    fs.copyFileSync(filePath, targetPath)
+    
+    return true
+  } catch (error) {
+    console.error("Import language file error:", error)
+    throw error
+  }
+})
+
+// 删除外部语言文件
+ipcMain.handle("delete-external-language", async (event, language) => {
+  try {
+    const languagesPath = getLanguagesPath()
+    const filePath = path.join(languagesPath, `${language}.json`)
+    
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    console.error("Delete external language error:", error)
+    throw error
+  }
+})
+
+// 选择语言文件
+ipcMain.handle("select-language-file", async () => {
+  try {
+    if (!win) return null
+    
+    const result = await dialog.showOpenDialog(win, {
+      properties: ['openFile'],
+      title: '选择语言文件',
+      filters: [
+        { name: 'JSON Files', extensions: ['json'] }
+      ]
+    })
+    
+    if (!result.canceled && result.filePaths.length > 0) {
+      return result.filePaths[0]
+    } else {
+      return null
+    }
+  } catch (error) {
+    console.error("Select language file error:", error)
+    return null
   }
 })
 

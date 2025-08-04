@@ -1,18 +1,41 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import i18n, { t, setLanguage, getSupportedLanguages } from "../utils/i18n"
+import i18n, { 
+  t, 
+  setLanguage, 
+  getSupportedLanguages, 
+  selectAndImportLanguageFile,
+  deleteExternalLanguage,
+  refreshExternalLanguages,
+  exportLanguageFile 
+} from "../utils/i18n"
 import { setTheme, getCurrentTheme, getThemeOptions } from "../utils/theme"
+import VersionManager from "../utils/VersionManager"
 import "./SettingsPage.css"
+
+// Material-UI Icons
+import LanguageIcon from '@material-ui/icons/Language'
+import PaletteIcon from '@material-ui/icons/Palette'
+import FolderIcon from '@material-ui/icons/Folder'
+import InfoIcon from '@material-ui/icons/Info'
+import RefreshIcon from '@material-ui/icons/Refresh'
+import DeleteIcon from '@material-ui/icons/Delete'
+import MusicNoteIcon from '@material-ui/icons/MusicNote'
+import GetAppIcon from '@material-ui/icons/GetApp'
+import CodeIcon from '@material-ui/icons/Code'
+import BuildIcon from '@material-ui/icons/Build'
+import PersonIcon from '@material-ui/icons/Person'
 
 const SettingsPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(i18n.getCurrentLanguage())
-  const [supportedLanguages] = useState(getSupportedLanguages())
+  const [supportedLanguages, setSupportedLanguages] = useState(getSupportedLanguages())
   const [language, setLanguageState] = useState(i18n.getCurrentLanguage())
   const [currentTheme, setCurrentTheme] = useState(getCurrentTheme())
   const [themeOptions] = useState(getThemeOptions())
   const [downloadPath, setDownloadPath] = useState("")
   const [pathLoading, setPathLoading] = useState(false)
+  const [languageLoading, setLanguageLoading] = useState(false)
 
   // 监听语言变化
   useEffect(() => {
@@ -55,6 +78,16 @@ const SettingsPage = () => {
     loadDownloadPath()
   }, [])
 
+  // 刷新语言列表
+  const refreshLanguageList = async () => {
+    try {
+      await refreshExternalLanguages()
+      setSupportedLanguages(getSupportedLanguages())
+    } catch (error) {
+      console.error("Failed to refresh language list:", error)
+    }
+  }
+
   const handleLanguageChange = async (newLanguage) => {
     try {
       await setLanguage(newLanguage)
@@ -75,31 +108,82 @@ const SettingsPage = () => {
     }
   }
 
-  const handleImportLanguage = () => {
-    const input = document.createElement("input")
-    input.type = "file"
-    input.accept = ".json"
-    input.onchange = async (e) => {
-      const file = e.target.files[0]
-      if (file) {
-        try {
-          const language = await i18n.importLanguageFile(file)
+  const handleImportLanguage = async () => {
+    try {
+      setLanguageLoading(true)
+      
+      if (window.electronAPI) {
+        // 使用新的electron API
+        const language = await selectAndImportLanguageFile()
+        if (language) {
+          await refreshLanguageList()
           alert(`${t("messages.success")}: ${language}`)
-        } catch (error) {
-          console.error("Import failed:", error)
-          alert(`${t("messages.error")}: ${error.message}`)
         }
+      } else {
+        // 浏览器环境，使用文件选择器
+        const input = document.createElement("input")
+        input.type = "file"
+        input.accept = ".json"
+        input.onchange = async (e) => {
+          const file = e.target.files[0]
+          if (file) {
+            try {
+              const language = await i18n.importLanguageFile(file)
+              await refreshLanguageList()
+              alert(`${t("messages.success")}: ${language}`)
+            } catch (error) {
+              console.error("Import failed:", error)
+              alert(`${t("messages.error")}: ${error.message}`)
+            }
+          }
+        }
+        input.click()
       }
+    } catch (error) {
+      console.error("Import failed:", error)
+      alert(`${t("messages.error")}: ${error.message}`)
+    } finally {
+      setLanguageLoading(false)
     }
-    input.click()
   }
 
   const handleExportLanguage = () => {
     try {
-      i18n.exportLanguageFile(currentLanguage)
+      exportLanguageFile(currentLanguage)
     } catch (error) {
       console.error("Export failed:", error)
       alert(`${t("messages.error")}: ${error.message}`)
+    }
+  }
+
+  const handleDeleteLanguage = async (languageCode) => {
+    if (!window.electronAPI) {
+      alert("此功能仅在桌面应用中可用")
+      return
+    }
+
+    const language = supportedLanguages.find(lang => lang.code === languageCode)
+    if (!language || language.type !== "external") {
+      alert("只能删除外部语言文件")
+      return
+    }
+
+    if (confirm(`确定要删除语言文件 "${language.name}" 吗？`)) {
+      try {
+        setLanguageLoading(true)
+        const success = await deleteExternalLanguage(languageCode)
+        if (success) {
+          await refreshLanguageList()
+          alert("语言文件删除成功")
+        } else {
+          alert("删除失败")
+        }
+      } catch (error) {
+        console.error("Delete failed:", error)
+        alert(`删除失败: ${error.message}`)
+      } finally {
+        setLanguageLoading(false)
+      }
     }
   }
 
@@ -160,17 +244,18 @@ const SettingsPage = () => {
         <h1>{t("settings.title")}</h1>
 
         <div className="settings-section">
-          <h2>🌐 {t("settings.language")}</h2>
+          <h2><LanguageIcon style={{ marginRight: '8px', verticalAlign: 'middle' }} /> {t("settings.language")}</h2>
           <div className="setting-item">
             <label>{t("settings.language")}:</label>
             <select
               value={currentLanguage}
               onChange={(e) => handleLanguageChange(e.target.value)}
               className="language-select"
+              disabled={languageLoading}
             >
               {supportedLanguages.map((lang) => (
                 <option key={lang.code} value={lang.code}>
-                  {lang.name}
+                  {lang.name} {lang.type === "external" ? "(外部)" : ""}
                 </option>
               ))}
             </select>
@@ -178,18 +263,57 @@ const SettingsPage = () => {
 
           <div className="setting-item">
             <div className="button-group">
-              <button onClick={handleImportLanguage} className="btn-secondary">
-                {t("settings.importLanguage")}
+              <button 
+                onClick={handleImportLanguage} 
+                className="btn-secondary"
+                disabled={languageLoading}
+              >
+                {languageLoading ? t("common.loading") : t("settings.importLanguage")}
               </button>
-              <button onClick={handleExportLanguage} className="btn-secondary">
+              <button 
+                onClick={handleExportLanguage} 
+                className="btn-secondary"
+                disabled={languageLoading}
+              >
                 {t("settings.exportLanguage")}
+              </button>
+              <button 
+                onClick={refreshLanguageList} 
+                className="btn-secondary"
+                disabled={languageLoading}
+              >
+                <RefreshIcon style={{ marginRight: '4px', fontSize: '16px' }} /> 刷新
               </button>
             </div>
           </div>
+
+          {/* 外部语言文件管理 */}
+          {window.electronAPI && supportedLanguages.some(lang => lang.type === "external") && (
+            <div className="setting-item">
+              <label>外部语言文件管理:</label>
+              <div className="external-languages-list">
+                {supportedLanguages
+                  .filter(lang => lang.type === "external")
+                  .map((lang) => (
+                    <div key={lang.code} className="external-language-item">
+                      <span className="language-name">{lang.name} ({lang.code})</span>
+                      <button 
+                        onClick={() => handleDeleteLanguage(lang.code)}
+                        className="btn-danger-small"
+                        disabled={languageLoading}
+                        title="删除此语言文件"
+                      >
+                        <DeleteIcon style={{ fontSize: '16px' }} />
+                      </button>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="settings-section">
-          <h2>🎨 {t("settings.theme")}</h2>
+          <h2><PaletteIcon style={{ marginRight: '8px', verticalAlign: 'middle' }} /> {t("settings.theme")}</h2>
           <div className="setting-item">
             <label>{t("settings.theme")}:</label>
             <select value={currentTheme} onChange={(e) => handleThemeChange(e.target.value)} className="theme-select">
@@ -203,7 +327,7 @@ const SettingsPage = () => {
         </div>
 
         <div className="settings-section">
-          <h2>📁 {t("settings.downloadPath")}</h2>
+          <h2><FolderIcon style={{ marginRight: '8px', verticalAlign: 'middle' }} /> {t("settings.downloadPath")}</h2>
           <div className="setting-item">
             <label>{t("settings.currentPath")}:</label>
             <div className="path-display">
@@ -237,15 +361,14 @@ const SettingsPage = () => {
         </div>
 
         <div className="settings-section">
-          <h2>ℹ️ {t("settings.about")}</h2>
+          <h2><InfoIcon style={{ marginRight: '8px', verticalAlign: 'middle' }} /> {t("settings.about")}</h2>
           <div className="about-info">
-            <p>
-              <strong>🎵 {t("app.title")}</strong>
-            </p>
-            <p>📦 Version: 1.9.0</p>
-            <p>🎮 A comprehensive rhythm game toolset</p>
-            <p>🔧 Professional tools for ADOFAI creators</p>
-            <p>👨‍💻 Author: lizi & Xbodw</p>
+              <p>
+                <strong><MusicNoteIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> 7BG Rhythm Studio</strong>
+              </p>
+              <p><GetAppIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {t("settings.version")}: {VersionManager.version}</p>
+              <p><PersonIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {t("settings.developer")}: lizi & XBodw</p>
+              <p><BuildIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> Powered by Electron + Vite + React</p>
           </div>
         </div>
 

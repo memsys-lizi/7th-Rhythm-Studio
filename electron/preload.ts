@@ -63,6 +63,14 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on("download-error", (event, data) => callback(data))
   },
 
+  onDownloadPaused: (callback: Function) => {
+    ipcRenderer.on("download-paused", (event, data) => callback(data))
+  },
+
+  onDownloadResumed: (callback: Function) => {
+    ipcRenderer.on("download-resumed", (event, data) => callback(data))
+  },
+
   // 本地文件管理API - 更新为使用工具ID
   checkFileExists: (toolId: string, extension?: string) => ipcRenderer.invoke("check-file-exists", toolId, extension),
   openLocalFile: (toolId: string, extension?: string) => ipcRenderer.invoke("open-local-file", toolId, extension),
@@ -73,6 +81,14 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getDownloadPath: () => ipcRenderer.invoke("get-download-path"),
   setDownloadPath: (path: string) => ipcRenderer.invoke("set-download-path", path),
   selectFolder: () => ipcRenderer.invoke("select-folder"),
+
+  // 语言文件管理API
+  readBuiltinLanguage: (language: string) => ipcRenderer.invoke("read-builtin-language", language),
+  readExternalLanguage: (language: string) => ipcRenderer.invoke("read-external-language", language),
+  getExternalLanguages: () => ipcRenderer.invoke("get-external-languages"),
+  importLanguageFile: (filePath: string, languageCode: string) => ipcRenderer.invoke("import-language-file", filePath, languageCode),
+  deleteExternalLanguage: (language: string) => ipcRenderer.invoke("delete-external-language", language),
+  selectLanguageFile: () => ipcRenderer.invoke("select-language-file"),
 })
 
 export default {}

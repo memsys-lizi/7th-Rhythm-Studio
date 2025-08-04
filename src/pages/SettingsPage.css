@@ -199,6 +199,65 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
+/* 外部语言文件管理样式 */
+.external-languages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.external-language-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.external-language-item:hover {
+  border-color: var(--border-color-hover);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.language-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.btn-danger-small {
+  padding: 6px 10px;
+  background: var(--error-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+}
+
+.btn-danger-small:hover:not(:disabled) {
+  background: var(--error-color-hover);
+  transform: scale(1.05);
+}
+
+.btn-danger-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .language-select:focus,
 .theme-select:focus {
   border-color: var(--accent-color);

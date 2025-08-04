@@ -4,6 +4,7 @@ class I18n {
     this.translations = {}
     this.fallbackLanguage = "en-US"
     this.loadedLanguages = new Set()
+    this.externalLanguages = new Set()
 
     // 初始化默认语言
     this.init()
@@ -20,8 +21,19 @@ class I18n {
       this.currentLanguage = systemLanguage
     }
 
-    // 加载默认语言
+    // 加载外部语言列表
+    await this.loadExternalLanguagesList()
+
+    // 尝试加载当前语言
     await this.loadLanguage(this.currentLanguage)
+
+    // 如果当前语言加载失败（比如外部语言文件不存在），回退到默认语言
+    if (!this.loadedLanguages.has(this.currentLanguage)) {
+      console.warn(`Failed to load saved language: ${this.currentLanguage}, falling back to ${this.fallbackLanguage}`)
+      this.currentLanguage = this.fallbackLanguage
+      localStorage.setItem("app-language", this.fallbackLanguage)
+      await this.loadLanguage(this.currentLanguage)
+    }
 
     // 如果当前语言不是fallback语言，也加载fallback语言
     if (this.currentLanguage !== this.fallbackLanguage) {
@@ -50,37 +62,65 @@ class I18n {
     return langMap[langCode] || "en-US"
   }
 
+  async loadExternalLanguagesList() {
+    try {
+      if (window.electronAPI) {
+        const externalLanguages = await window.electronAPI.getExternalLanguages()
+        this.externalLanguages = new Set(externalLanguages)
+      }
+    } catch (error) {
+      console.warn("Failed to load external languages list:", error)
+    }
+  }
+
   async loadLanguage(language) {
     if (this.loadedLanguages.has(language)) {
       return
     }
 
-    try {
-      // 尝试从内置语言文件加载
-      const response = await fetch(`/src/locales/${language}.json`)
-      if (response.ok) {
-        const translations = await response.json()
-        this.translations[language] = translations
-        this.loadedLanguages.add(language)
-        return
+    // 检查是否为electron环境
+    if (window.electronAPI) {
+      // 优先尝试从外部语言文件加载
+      if (this.externalLanguages.has(language)) {
+        try {
+          const translations = await window.electronAPI.readExternalLanguage(language)
+          if (translations) {
+            this.translations[language] = translations
+            this.loadedLanguages.add(language)
+            console.log(`Loaded external language file: ${language}`)
+            return
+          }
+        } catch (error) {
+          console.warn(`Failed to load external language ${language}:`, error)
+        }
       }
-    } catch (error) {
-      console.warn(`Failed to load built-in language ${language}:`, error)
-    }
 
-    // 尝试从外部语言文件加载
-    try {
-      const externalPath = `./languages/${language}.json`
-      const response = await fetch(externalPath)
-      if (response.ok) {
-        const translations = await response.json()
-        this.translations[language] = translations
-        this.loadedLanguages.add(language)
-        console.log(`Loaded external language file: ${language}`)
-        return
+      // 尝试从内置语言文件加载
+      try {
+        const translations = await window.electronAPI.readBuiltinLanguage(language)
+        if (translations) {
+          this.translations[language] = translations
+          this.loadedLanguages.add(language)
+          console.log(`Loaded built-in language file: ${language}`)
+          return
+        }
+      } catch (error) {
+        console.warn(`Failed to load built-in language ${language}:`, error)
       }
-    } catch (error) {
-      console.warn(`Failed to load external language ${language}:`, error)
+    } else {
+      // 浏览器环境，使用fetch（开发环境）
+      try {
+        const response = await fetch(`/src/locales/${language}.json`)
+        if (response.ok) {
+          const translations = await response.json()
+          this.translations[language] = translations
+          this.loadedLanguages.add(language)
+          console.log(`Loaded language file via fetch: ${language}`)
+          return
+        }
+      } catch (error) {
+        console.warn(`Failed to load language via fetch ${language}:`, error)
+      }
     }
 
     console.error(`Failed to load language: ${language}`)
@@ -151,14 +191,141 @@ class I18n {
   }
 
   getSupportedLanguages() {
-    return [
-      { code: "zh-CN", name: "简体中文" },
-      { code: "en-US", name: "English" },
-      { code: "ja-JP", name: "日本語" },
-      { code: "ko-KR", name: "한국어" },
+    const builtinLanguages = [
+      { code: "zh-CN", name: "简体中文", type: "builtin" },
+      { code: "en-US", name: "English", type: "builtin" },
+      { code: "ja-JP", name: "日本語", type: "builtin" },
+      { code: "ko-KR", name: "한국어", type: "builtin" },
     ]
+
+    // 添加外部语言
+    const externalLanguages = Array.from(this.externalLanguages).map(code => ({
+      code,
+      name: this.getLanguageDisplayName(code),
+      type: "external"
+    }))
+
+    return [...builtinLanguages, ...externalLanguages]
   }
 
+  getLanguageDisplayName(code) {
+    // 尝试从已加载的翻译中获取语言名称
+    if (this.translations[code] && this.translations[code].app && this.translations[code].app.languageName) {
+      return this.translations[code].app.languageName
+    }
+
+    // 默认显示名称映射
+    const defaultNames = {
+      "zh-CN": "简体中文",
+      "en-US": "English", 
+      "ja-JP": "日本語",
+      "ko-KR": "한국어",
+      "zh-TW": "繁體中文",
+      "fr-FR": "Français",
+      "de-DE": "Deutsch",
+      "es-ES": "Español",
+      "ru-RU": "Русский",
+      "pt-BR": "Português (Brasil)",
+      "it-IT": "Italiano",
+      "nl-NL": "Nederlands",
+      "sv-SE": "Svenska",
+      "da-DK": "Dansk",
+      "no-NO": "Norsk",
+      "fi-FI": "Suomi",
+      "pl-PL": "Polski",
+      "cs-CZ": "Čeština",
+      "hu-HU": "Magyar",
+      "tr-TR": "Türkçe",
+      "ar-SA": "العربية",
+      "he-IL": "עברית",
+      "th-TH": "ไทย",
+      "vi-VN": "Tiếng Việt",
+      "id-ID": "Bahasa Indonesia",
+      "ms-MY": "Bahasa Melayu",
+      "hi-IN": "हिन्दी",
+      "bn-BD": "বাংলা",
+      "ur-PK": "اردو"
+    }
+
+    return defaultNames[code] || code
+  }
+
+  async selectAndImportLanguageFile() {
+    try {
+      if (!window.electronAPI) {
+        throw new Error("This feature is only available in the desktop app")
+      }
+
+      // 选择文件
+      const filePath = await window.electronAPI.selectLanguageFile()
+      if (!filePath) {
+        return null // 用户取消选择
+      }
+
+      // 从文件名推断语言代码
+      const fileName = filePath.split(/[/\\]/).pop().replace(".json", "")
+      const language = fileName.includes("-") ? fileName : `${fileName}-CUSTOM`
+
+      // 导入文件（复制到用户数据目录）
+      await window.electronAPI.importLanguageFile(filePath, language)
+
+      // 重新加载外部语言列表
+      await this.loadExternalLanguagesList()
+
+      // 加载新导入的语言
+      await this.loadLanguage(language)
+
+      console.log(`Language file imported successfully: ${language}`)
+      return language
+    } catch (error) {
+      console.error("Failed to import language file:", error)
+      throw error
+    }
+  }
+
+  async deleteExternalLanguage(language) {
+    try {
+      if (!window.electronAPI) {
+        throw new Error("This feature is only available in the desktop app")
+      }
+
+      const success = await window.electronAPI.deleteExternalLanguage(language)
+      if (success) {
+        // 从内存中移除
+        delete this.translations[language]
+        this.loadedLanguages.delete(language)
+        this.externalLanguages.delete(language)
+
+        // 如果当前语言被删除，切换到默认语言
+        if (this.currentLanguage === language) {
+          await this.setLanguage(this.fallbackLanguage)
+        }
+
+        console.log(`External language deleted: ${language}`)
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error("Failed to delete external language:", error)
+      throw error
+    }
+  }
+
+  async refreshExternalLanguages() {
+    try {
+      await this.loadExternalLanguagesList()
+      
+      // 重新加载当前语言（如果是外部语言）
+      if (this.externalLanguages.has(this.currentLanguage)) {
+        this.loadedLanguages.delete(this.currentLanguage)
+        await this.loadLanguage(this.currentLanguage)
+      }
+    } catch (error) {
+      console.error("Failed to refresh external languages:", error)
+    }
+  }
+
+  // 保留原有的importLanguageFile方法用于向后兼容（浏览器环境）
   async importLanguageFile(file) {
     try {
       const text = await file.text()
@@ -176,7 +343,7 @@ class I18n {
       this.translations[language] = translations
       this.loadedLanguages.add(language)
 
-      console.log(`Imported language file: ${language}`)
+      console.log(`Imported language file (temporary): ${language}`)
       return language
     } catch (error) {
       console.error("Failed to import language file:", error)
@@ -220,3 +387,8 @@ export const t = (key, params) => i18n.t(key, params)
 export const setLanguage = (language) => i18n.setLanguage(language)
 export const getCurrentLanguage = () => i18n.getCurrentLanguage()
 export const getSupportedLanguages = () => i18n.getSupportedLanguages()
+export const selectAndImportLanguageFile = () => i18n.selectAndImportLanguageFile()
+export const deleteExternalLanguage = (language) => i18n.deleteExternalLanguage(language)
+export const refreshExternalLanguages = () => i18n.refreshExternalLanguages()
+export const exportLanguageFile = (language) => i18n.exportLanguageFile(language)
+export const importLanguageFile = (file) => i18n.importLanguageFile(file)

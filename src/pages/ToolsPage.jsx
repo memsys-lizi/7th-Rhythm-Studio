@@ -7,6 +7,9 @@ import ExpandLessIcon from "@material-ui/icons/ExpandLess"
 import SearchIcon from "@material-ui/icons/Search"
 import ClearIcon from "@material-ui/icons/Clear"
 import i18n, { t } from "../utils/i18n"
+import { marked } from "marked"
+
+
 import "./ToolsPage.css"
 
 const ToolsPage = ({ onStartDownload, downloads }) => {
@@ -121,21 +124,7 @@ const ToolsPage = ({ onStartDownload, downloads }) => {
 
   // 渲染Markdown文本为HTML
   const renderMarkdown = (text) => {
-    if (!text) return ""
-
-    return text
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // 粗体
-      .replace(/\*(.*?)\*/g, "<em>$1</em>") // 斜体
-      .replace(/`(.*?)`/g, "<code>$1</code>") // 行内代码
-      .replace(/### (.*?)(\n|$)/g, "<h3>$1</h3>") // 三级标题
-      .replace(/## (.*?)(\n|$)/g, "<h2>$1</h2>") // 二级标题
-      .replace(/# (.*?)(\n|$)/g, "<h1>$1</h1>") // 一级标题
-      .replace(/\n- (.*?)(\n|$)/g, "<li>$1</li>") // 列表项
-      .replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>") // 包装列表
-      .replace(/\n\n/g, "</p><p>") // 段落
-      .replace(/^(.*)/, "<p>$1") // 开始段落
-      .replace(/(.*$)/, "$1</p>") // 结束段落
-      .replace(/\n/g, "<br>") // 换行
+    return marked.parse(text)
   }
 
   // 处理右侧面板内容切换

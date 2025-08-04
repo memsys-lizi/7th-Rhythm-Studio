@@ -10,7 +10,12 @@
   },
   "files": [
     "dist",
-    "dist-electron"
+    "dist-electron",
+    {
+      "from": "src/locales",
+      "to": "locales",
+      "filter": ["**/*.json"]
+    }
   ],
   "mac": {
     "target": [
