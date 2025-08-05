@@ -90,6 +90,19 @@ const IFrame = forwardRef(
     const [errorMessage, setErrorMessage] = useState("")
     const [language, setLanguage] = useState(i18n.getCurrentLanguage())
 
+    // 设置安全的sandbox权限，防止iframe操作顶层窗口
+    const getSafeSandbox = (customSandbox) => {
+      // 默认安全权限：允许脚本、同源请求、表单、弹窗，但禁止顶层导航
+      const defaultSandbox = "allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+      
+      // 如果用户自定义了sandbox，使用用户的设置
+      if (customSandbox) {
+        return customSandbox
+      }
+      
+      return defaultSandbox
+    }
+
     // 监听语言变化
     useEffect(() => {
       const handleLanguageChange = (event) => {
@@ -210,8 +223,9 @@ const IFrame = forwardRef(
           onLoad={handleLoad}
           onError={handleError}
           allowFullScreen={allowFullScreen}
-          sandbox={sandbox || undefined}
+          sandbox={getSafeSandbox(sandbox)}
           loading={loading}
+          cache="no-cache"
           style={{
             width: "100%",
             height: "100%",
