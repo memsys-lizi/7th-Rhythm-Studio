@@ -1,31 +1,86 @@
-# Re_ADOFAI-Tools
+# 7th Rhythm Studio
 
+## 项目简介
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+7th Rhythm Studio 是原 ADOFAI-Tools 和 RD Plugin Hub 合并后的全新统一软件平台。作为节奏游戏工具集的新一代产品，本软件致力于为 A Dance of Fire and Ice (ADOFAI) 和 Rhythm Doctor (RD) 社区提供一站式的工具和资源整合服务。
 
-Currently, two official plugins are available:
+## ✨ 主要特性
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🚀 性能优化
+- **大幅提升流畅度**：采用全新的技术架构，显著改善了软件运行性能
+- **现代化界面**：基于 Electron + React + Vite 构建，提供流畅的用户体验
+- **快速启动**：优化启动速度，减少等待时间
 
-## Expanding the ESLint configuration
+### 🌐 社区资源整合
+- **统一平台**：将原本分散的工具和插件整合到一个平台中
+- **社区内容**：集成社区优质资源，方便用户发现和使用
+- **在线工具**：提供丰富的在线工具集合
+- **实时更新**：支持热更新，确保用户始终使用最新功能
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 🛠️ 功能模块
+- **工具集合**：整合各类节奏游戏相关工具
+- **插件管理**：统一的插件安装和管理界面
+- **社区交流**：便捷的社区互动功能
+- **设置中心**：个性化的设置和配置选项
+- **多语言支持**：支持中文、英文、日文、韩文等多种语言
 
-- Configure the top-level `parserOptions` property like this:
+## 🔧 技术栈
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+- **前端框架**：React 18
+- **构建工具**：Vite
+- **桌面框架**：Electron
+- **样式方案**：CSS Modules
+- **类型支持**：TypeScript
+- **国际化**：i18next
+
+## 📦 安装和使用
+
+### 环境要求
+- Node.js 16+
+- npm 或 yarn
+
+### 开发环境启动
+```bash
+# 安装依赖
+npm install
+# 或
+yarn install
+
+# 启动开发服务器
+npm run dev
+# 或
+yarn dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### 打包发布
+```bash
+# 构建应用
+npm run build
+# 或
+yarn build
+
+# 打包桌面应用
+npm run electron:build
+# 或
+yarn electron:build
+```
+
+## 🤝 贡献
+
+我们欢迎社区成员参与项目贡献！如果您有任何建议或发现了问题，请通过以下方式参与：
+
+1. 提交 Issue 报告问题或建议
+2. 提交 Pull Request 贡献代码
+3. 参与社区讨论，分享使用经验
+
+## 📄 许可证
+
+本项目采用开源许可证，具体许可信息请查看 LICENSE 文件。
+
+## 🙏 致谢
+
+感谢原 ADOFAI-Tools 和 RD Plugin Hub 项目的贡献者们，以及所有支持和使用本软件的社区成员。
+
+---
+
+**让节奏游戏创作更简单，让社区资源更易获取！**
