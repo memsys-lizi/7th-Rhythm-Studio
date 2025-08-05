@@ -141,6 +141,101 @@ body {
     font-size: 1.2rem;
 }
 
+/* 语言选择器 */
+.language-selector {
+    position: relative;
+    display: inline-block;
+}
+
+.language-toggle {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.language-toggle:hover {
+    background: var(--bg-tertiary);
+    transform: scale(1.02);
+}
+
+.language-icon {
+    font-size: 1rem;
+}
+
+.language-text {
+    font-weight: 500;
+}
+
+.language-arrow {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.language-toggle.active .language-arrow {
+    transform: rotate(180deg);
+}
+
+.language-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 8px 30px var(--shadow-medium);
+    min-width: 120px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.language-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.language-option:hover {
+    background: var(--bg-secondary);
+}
+
+.language-option:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+.language-option:last-child {
+    border-radius: 0 0 8px 8px;
+}
+
+.language-option.active {
+    background: var(--accent-primary);
+    color: white;
+}
+
+.lang-flag {
+    font-size: 1rem;
+}
+
 .mobile-menu-btn {
     display: none;
     flex-direction: column;
@@ -778,6 +873,22 @@ body {
     
     .mobile-menu-btn {
         display: flex;
+    }
+    
+    .language-selector {
+        margin-top: 1rem;
+        width: 100%;
+    }
+    
+    .language-toggle {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .language-dropdown {
+        left: 0;
+        right: 0;
+        width: 100%;
     }
     
     .hero-content {

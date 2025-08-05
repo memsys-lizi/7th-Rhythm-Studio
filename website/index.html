@@ -18,11 +18,28 @@
                 <span class="logo-text">7th Rhythm Studio</span>
             </div>
             <div class="nav-menu">
-                <a href="#home" class="nav-link">首页</a>
-                <a href="#features" class="nav-link">功能</a>
-                <a href="#screenshots" class="nav-link">截图</a>
-                <a href="#download" class="nav-link">下载</a>
-                <a href="#changelog" class="nav-link">更新日志</a>
+                <a href="#home" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="#features" class="nav-link" data-i18n="nav.features">功能</a>
+                <a href="#screenshots" class="nav-link" data-i18n="nav.screenshots">截图</a>
+                <a href="#download" class="nav-link" data-i18n="nav.download">下载</a>
+                <a href="#changelog" class="nav-link" data-i18n="nav.changelog">更新日志</a>
+                <div class="language-selector">
+                    <button class="language-toggle" id="languageToggle">
+                        <span class="language-icon">🌐</span>
+                        <span class="language-text" id="languageText">中文</span>
+                        <span class="language-arrow">▼</span>
+                    </button>
+                    <div class="language-dropdown" id="languageDropdown">
+                        <div class="language-option" data-lang="zh">
+                            <span class="lang-flag">🇨🇳</span>
+                            <span>中文</span>
+                        </div>
+                        <div class="language-option" data-lang="en">
+                            <span class="lang-flag">🇺🇸</span>
+                            <span>English</span>
+                        </div>
+                    </div>
+                </div>
                 <button class="theme-toggle" id="themeToggle">
                     <span class="theme-icon">🌙</span>
                 </button>
@@ -44,16 +61,16 @@
                     <div class="hero-text">
                         <h1 class="hero-title">
                             <span class="title-main">7th Rhythm Studio</span>
-                            <span class="title-sub">节奏游戏工具集的新时代</span>
+                            <span class="title-sub" data-i18n="hero.subtitle">节奏游戏工具集的新时代</span>
                         </h1>
-                        <p class="hero-description">
+                        <p class="hero-description" data-i18n="hero.description">
                             原 ADOFAI-Tools 和 RD Plugin Hub 合并后的全新统一软件平台。
                             大幅提升流畅度，整合社区资源，为 A Dance of Fire and Ice 和 Rhythm Doctor 
                             社区提供一站式的工具和资源整合服务。
                         </p>
                         <div class="hero-buttons">
-                            <a href="#download" class="btn btn-primary">立即下载</a>
-                            <a href="#features" class="btn btn-secondary">了解更多</a>
+                            <a href="#download" class="btn btn-primary" data-i18n="hero.download">立即下载</a>
+                            <a href="#features" class="btn btn-secondary" data-i18n="hero.learn_more">了解更多</a>
                         </div>
                     </div>
                     <div class="hero-image">
@@ -69,43 +86,43 @@
         <section id="features" class="features">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">为什么选择 7th Rhythm Studio？</h2>
-                    <p class="section-subtitle">集成两大工具平台的精华，带来前所未有的使用体验</p>
+                    <h2 class="section-title" data-i18n="features.title">为什么选择 7th Rhythm Studio？</h2>
+                    <p class="section-subtitle" data-i18n="features.subtitle">集成两大工具平台的精华，带来前所未有的使用体验</p>
                 </div>
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon">🚀</div>
-                        <h3 class="feature-title">性能飞跃</h3>
-                        <p class="feature-description">
+                        <h3 class="feature-title" data-i18n="features.performance.title">性能飞跃</h3>
+                        <p class="feature-description" data-i18n="features.performance.description">
                             采用全新技术架构，大幅提升软件流畅度，启动更快，操作更流畅，告别卡顿体验。
                         </p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">🌐</div>
-                        <h3 class="feature-title">社区整合</h3>
-                        <p class="feature-description">
+                        <h3 class="feature-title" data-i18n="features.community.title">社区整合</h3>
+                        <p class="feature-description" data-i18n="features.community.description">
                             统一ADOFAI和RD两大社区资源，一个平台获取所有工具，实时更新社区最新内容。
                         </p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">🛠️</div>
-                        <h3 class="feature-title">工具集成</h3>
-                        <p class="feature-description">
+                        <h3 class="feature-title" data-i18n="features.tools.title">工具集成</h3>
+                        <p class="feature-description" data-i18n="features.tools.description">
                             整合各类节奏游戏工具，统一的插件管理，在线工具集合，一站式解决所有需求。
                         </p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">🎨</div>
-                        <h3 class="feature-title">现代设计</h3>
-                        <p class="feature-description">
+                        <h3 class="feature-title" data-i18n="features.design.title">现代设计</h3>
+                        <p class="feature-description" data-i18n="features.design.description">
                             基于Electron + React构建，现代化界面设计，支持多语言，提供优雅的用户体验。
                         </p>
                     </div>
 
                     <div class="feature-card">
                         <div class="feature-icon">🤝</div>
-                        <h3 class="feature-title">社区驱动</h3>
-                        <p class="feature-description">
+                        <h3 class="feature-title" data-i18n="features.driven.title">社区驱动</h3>
+                        <p class="feature-description" data-i18n="features.driven.description">
                             开放的贡献机制，活跃的社区交流，与创作者们一起推动工具发展。
                         </p>
                     </div>
@@ -117,44 +134,44 @@
         <section id="screenshots" class="screenshots">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">软件预览</h2>
-                    <p class="section-subtitle">一览 7th Rhythm Studio 的精美界面</p>
+                    <h2 class="section-title" data-i18n="screenshots.title">软件预览</h2>
+                    <p class="section-subtitle" data-i18n="screenshots.subtitle">一览 7th Rhythm Studio 的精美界面</p>
                 </div>
                 <div class="screenshots-grid">
                     <!-- 软件截图 -->
                     <div class="screenshot-item">
                         <img src="img/home.png" alt="主界面截图" class="screenshot-img">
                         <div class="screenshot-caption">
-                            <h4>主界面</h4>
-                            <p>现代化的软件主界面，直观的功能导航</p>
+                            <h4 data-i18n="screenshots.home.title">主界面</h4>
+                            <p data-i18n="screenshots.home.description">现代化的软件主界面，直观的功能导航</p>
                         </div>
                     </div>
                     <div class="screenshot-item">
                         <img src="img/tools.png" alt="工具集界面截图" class="screenshot-img">
                         <div class="screenshot-caption">
-                            <h4>工具集界面</h4>
-                            <p>丰富的节奏游戏工具集合，一键使用</p>
+                            <h4 data-i18n="screenshots.tools.title">工具集界面</h4>
+                            <p data-i18n="screenshots.tools.description">丰富的节奏游戏工具集合，一键使用</p>
                         </div>
                     </div>
                     <div class="screenshot-item">
                         <img src="img/onlinetools.png" alt="在线工具界面截图" class="screenshot-img">
                         <div class="screenshot-caption">
-                            <h4>在线工具</h4>
-                            <p>强大的在线工具集，无需下载即可使用</p>
+                            <h4 data-i18n="screenshots.onlinetools.title">在线工具</h4>
+                            <p data-i18n="screenshots.onlinetools.description">强大的在线工具集，无需下载即可使用</p>
                         </div>
                     </div>
                     <div class="screenshot-item">
                         <img src="img/community.png" alt="社区页面截图" class="screenshot-img">
                         <div class="screenshot-caption">
-                            <h4>社区页面</h4>
-                            <p>活跃的社区交流，分享创作与资源</p>
+                            <h4 data-i18n="screenshots.community.title">社区页面</h4>
+                            <p data-i18n="screenshots.community.description">活跃的社区交流，分享创作与资源</p>
                         </div>
                     </div>
                     <div class="screenshot-item">
                         <img src="img/settings.png" alt="设置界面截图" class="screenshot-img">
                         <div class="screenshot-caption">
-                            <h4>设置界面</h4>
-                            <p>个性化设置选项，打造专属使用体验</p>
+                            <h4 data-i18n="screenshots.settings.title">设置界面</h4>
+                            <p data-i18n="screenshots.settings.description">个性化设置选项，打造专属使用体验</p>
                         </div>
                     </div>
                 </div>
@@ -165,24 +182,24 @@
         <section id="download" class="download">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">立即下载</h2>
-                    <p class="section-subtitle">支持 Windows 和 macOS 平台，完全免费使用</p>
+                    <h2 class="section-title" data-i18n="download.title">立即下载</h2>
+                    <p class="section-subtitle" data-i18n="download.subtitle">支持 Windows 和 macOS 平台，完全免费使用</p>
                 </div>
                 <div class="download-cards">
                     <div class="download-card">
                         <div class="download-platform">
                             <div class="platform-icon">🪟</div>
                             <h3>Windows</h3>
-                            <p class="platform-info">支持 Windows 10/11</p>
+                            <p class="platform-info" data-i18n="download.windows_info">支持 Windows 10/11</p>
                         </div>
                         <div class="download-info">
                             <div class="version-info">
-                                <span class="version" id="windows-version">加载中...</span>
+                                <span class="version" id="windows-version" data-i18n="download.loading">加载中...</span>
                                 <span class="size">~50MB</span>
                             </div>
                             <a href="#" class="btn btn-download" id="windows-download" data-platform="windows">
-                                <span class="download-text">下载 Windows 版本</span>
-                                <span class="loading-spinner" style="display: none;">下载中...</span>
+                                <span class="download-text" data-i18n="download.windows_button">下载 Windows 版本</span>
+                                <span class="loading-spinner" style="display: none;" data-i18n="download.downloading">下载中...</span>
                             </a>
                         </div>
                     </div>
@@ -190,23 +207,23 @@
                         <div class="download-platform">
                             <div class="platform-icon">🍎</div>
                             <h3>macOS</h3>
-                            <p class="platform-info">支持 macOS 10.15+</p>
+                            <p class="platform-info" data-i18n="download.macos_info">支持 macOS 10.15+</p>
                         </div>
                         <div class="download-info">
                             <div class="version-info">
-                                <span class="version" id="macos-version">加载中...</span>
+                                <span class="version" id="macos-version" data-i18n="download.loading">加载中...</span>
                                 <span class="size">~60MB</span>
                             </div>
                             <a href="#" class="btn btn-download" id="macos-download" data-platform="macos">
-                                <span class="download-text">下载 macOS 版本</span>
-                                <span class="loading-spinner" style="display: none;">下载中...</span>
+                                <span class="download-text" data-i18n="download.macos_button">下载 macOS 版本</span>
+                                <span class="loading-spinner" style="display: none;" data-i18n="download.downloading">下载中...</span>
                             </a>
                         </div>
                     </div>
                 </div>
                 <div class="download-note">
-                    <p>⚠️ 请注意：本软件仅供个人使用，不允许重新分发。如需分享给朋友，请引导他们访问本官网下载。</p>
-                    <p>💡 遇到问题？查看 <a href="#" class="link">安装指南</a> 或 <a href="#" class="link">常见问题</a></p>
+                    <p data-i18n="download.notice">⚠️ 请注意：本软件仅供个人使用，不允许重新分发。如需分享给朋友，请引导他们访问本官网下载。</p>
+                    <p data-i18n="download.help">💡 遇到问题？查看 <a href="#" class="link">安装指南</a> 或 <a href="#" class="link">常见问题</a></p>
                 </div>
             </div>
         </section>
@@ -215,13 +232,13 @@
         <section id="changelog" class="changelog">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">更新日志</h2>
-                    <p class="section-subtitle">了解 7th Rhythm Studio 的最新更新和改进</p>
+                    <h2 class="section-title" data-i18n="changelog.title">更新日志</h2>
+                    <p class="section-subtitle" data-i18n="changelog.subtitle">了解 7th Rhythm Studio 的最新更新和改进</p>
                 </div>
                 <div class="changelog-container" id="changelog-container">
                     <div class="changelog-loading">
                         <div class="loading-spinner-large"></div>
-                        <p>加载更新日志中...</p>
+                        <p data-i18n="changelog.loading">加载更新日志中...</p>
                     </div>
                 </div>
             </div>
@@ -237,21 +254,21 @@
                         <img src="icon.png" alt="7th Rhythm Studio" class="footer-logo-img">
                         <span>7th Rhythm Studio</span>
                     </div>
-                    <p class="footer-description">
+                    <p class="footer-description" data-i18n="footer.description">
                         让节奏游戏创作更简单，让社区资源更易获取！
                     </p>
                 </div>
                 <div class="footer-links">
                     <div class="footer-section">
-                        <h4>产品</h4>
+                        <h4 data-i18n="footer.product">产品</h4>
                         <ul>
-                            <li><a href="#features">功能特性</a></li>
-                            <li><a href="#download">下载</a></li>
-                            <li><a href="#changelog">更新日志</a></li>
+                            <li><a href="#features" data-i18n="footer.features">功能特性</a></li>
+                            <li><a href="#download" data-i18n="footer.download">下载</a></li>
+                            <li><a href="#changelog" data-i18n="footer.changelog">更新日志</a></li>
                         </ul>
                     </div>
                     <div class="footer-section">
-                        <h4>社区</h4>
+                        <h4 data-i18n="footer.community">社区</h4>
                         <ul>
                             <li><a href="https://github.com/memsys-lizi/7th-Rhythm-Studio">GitHub</a></li>
                             <li><a href="https://discord.gg/ZnaxkF9amE">Discord</a></li>
@@ -261,7 +278,7 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2025 7th Rhythm Studio Development Team. All rights reserved.</p>
-                <p>本软件采用自定义许可证，查看 <a href="#" class="link">许可证</a> 了解详情。</p>
+                <p data-i18n="footer.license">本软件采用自定义许可证，查看 <a href="#" class="link">许可证</a> 了解详情。</p>
             </div>
         </div>
     </footer>

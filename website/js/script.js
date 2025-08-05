@@ -1,3 +1,333 @@
+// 多语言管理器
+class LanguageManager {
+    constructor() {
+        this.currentLanguage = this.getStoredLanguage() || this.detectSystemLanguage();
+        this.languageToggle = document.getElementById('languageToggle');
+        this.languageDropdown = document.getElementById('languageDropdown');
+        this.languageText = document.getElementById('languageText');
+        this.translations = this.getTranslations();
+        this.init();
+    }
+
+    getTranslations() {
+        return {
+            zh: {
+                nav: {
+                    home: "首页",
+                    features: "功能",
+                    screenshots: "截图",
+                    download: "下载",
+                    changelog: "更新日志"
+                },
+                hero: {
+                    subtitle: "节奏游戏工具集的新时代",
+                    description: "原 ADOFAI-Tools 和 RD Plugin Hub 合并后的全新统一软件平台。大幅提升流畅度，整合社区资源，为 A Dance of Fire and Ice 和 Rhythm Doctor 社区提供一站式的工具和资源整合服务。",
+                    download: "立即下载",
+                    learn_more: "了解更多"
+                },
+                features: {
+                    title: "为什么选择 7th Rhythm Studio？",
+                    subtitle: "集成两大工具平台的精华，带来前所未有的使用体验",
+                    performance: {
+                        title: "性能飞跃",
+                        description: "采用全新技术架构，大幅提升软件流畅度，启动更快，操作更流畅，告别卡顿体验。"
+                    },
+                    community: {
+                        title: "社区整合",
+                        description: "统一ADOFAI和RD两大社区资源，一个平台获取所有工具，实时更新社区最新内容。"
+                    },
+                    tools: {
+                        title: "工具集成",
+                        description: "整合各类节奏游戏工具，统一的插件管理，在线工具集合，一站式解决所有需求。"
+                    },
+                    design: {
+                        title: "现代设计",
+                        description: "基于Electron + React构建，现代化界面设计，支持多语言，提供优雅的用户体验。"
+                    },
+                    driven: {
+                        title: "社区驱动",
+                        description: "开放的贡献机制，活跃的社区交流，与创作者们一起推动工具发展。"
+                    }
+                },
+                screenshots: {
+                    title: "软件预览",
+                    subtitle: "一览 7th Rhythm Studio 的精美界面",
+                    home: {
+                        title: "主界面",
+                        description: "现代化的软件主界面，直观的功能导航"
+                    },
+                    tools: {
+                        title: "工具集界面",
+                        description: "丰富的节奏游戏工具集合，一键使用"
+                    },
+                    onlinetools: {
+                        title: "在线工具",
+                        description: "强大的在线工具集，无需下载即可使用"
+                    },
+                    community: {
+                        title: "社区页面",
+                        description: "活跃的社区交流，分享创作与资源"
+                    },
+                    settings: {
+                        title: "设置界面",
+                        description: "个性化设置选项，打造专属使用体验"
+                    }
+                },
+                download: {
+                    title: "立即下载",
+                    subtitle: "支持 Windows 和 macOS 平台，完全免费使用",
+                    loading: "加载中...",
+                    windows_button: "下载 Windows 版本",
+                    windows_info: "支持 Windows 10/11",
+                    macos_button: "下载 macOS 版本",
+                    macos_info: "支持 macOS 10.15+",
+                    downloading: "下载中...",
+                    notice: "⚠️ 请注意：本软件仅供个人使用，不允许重新分发。如需分享给朋友，请引导他们访问本官网下载。",
+                    help: "💡 遇到问题？查看 安装指南 或 常见问题"
+                },
+                changelog: {
+                    title: "更新日志",
+                    subtitle: "了解 7th Rhythm Studio 的最新更新和改进",
+                    loading: "加载更新日志中..."
+                },
+                footer: {
+                    description: "让节奏游戏创作更简单，让社区资源更易获取！",
+                    product: "产品",
+                    features: "功能特性",
+                    download: "下载",
+                    changelog: "更新日志",
+                    community: "社区",
+                    license: "本软件采用自定义许可证，查看 许可证 了解详情。"
+                }
+            },
+            en: {
+                nav: {
+                    home: "Home",
+                    features: "Features",
+                    screenshots: "Screenshots",
+                    download: "Download",
+                    changelog: "Changelog"
+                },
+                hero: {
+                    subtitle: "A New Era of Rhythm Game Tools",
+                    description: "A brand new unified software platform that merges ADOFAI-Tools and RD Plugin Hub. Significantly improved performance, integrated community resources, providing one-stop tools and resource integration services for A Dance of Fire and Ice and Rhythm Doctor communities.",
+                    download: "Download Now",
+                    learn_more: "Learn More"
+                },
+                features: {
+                    title: "Why Choose 7th Rhythm Studio?",
+                    subtitle: "Integrating the essence of two major tool platforms, bringing unprecedented user experience",
+                    performance: {
+                        title: "Performance Leap",
+                        description: "Adopting new technical architecture, significantly improving software fluency, faster startup, smoother operation, goodbye to lag experience."
+                    },
+                    community: {
+                        title: "Community Integration",
+                        description: "Unifying ADOFAI and RD community resources, getting all tools on one platform, real-time updates of the latest community content."
+                    },
+                    tools: {
+                        title: "Tool Integration",
+                        description: "Integrating various rhythm game tools, unified plugin management, online tool collection, one-stop solution for all needs."
+                    },
+                    design: {
+                        title: "Modern Design",
+                        description: "Built with Electron + React, modern interface design, multi-language support, providing elegant user experience."
+                    },
+                    driven: {
+                        title: "Community Driven",
+                        description: "Open contribution mechanism, active community communication, working with creators to drive tool development."
+                    }
+                },
+                screenshots: {
+                    title: "Software Preview",
+                    subtitle: "Take a look at the beautiful interface of 7th Rhythm Studio",
+                    home: {
+                        title: "Main Interface",
+                        description: "Modern software main interface with intuitive function navigation"
+                    },
+                    tools: {
+                        title: "Tools Interface",
+                        description: "Rich collection of rhythm game tools, one-click to use"
+                    },
+                    onlinetools: {
+                        title: "Online Tools",
+                        description: "Powerful online tool collection, no download required"
+                    },
+                    community: {
+                        title: "Community Page",
+                        description: "Active community communication, sharing creations and resources"
+                    },
+                    settings: {
+                        title: "Settings Interface",
+                        description: "Personalized setting options, create your exclusive experience"
+                    }
+                },
+                download: {
+                    title: "Download Now",
+                    subtitle: "Supports Windows and macOS platforms, completely free to use",
+                    loading: "Loading...",
+                    windows_button: "Download Windows Version",
+                    windows_info: "Supports Windows 10/11",
+                    macos_button: "Download macOS Version",
+                    macos_info: "Supports macOS 10.15+",
+                    downloading: "Downloading...",
+                    notice: "⚠️ Notice: This software is for personal use only, redistribution is not allowed. If you want to share with friends, please guide them to visit this official website to download.",
+                    help: "💡 Having problems? Check Installation Guide or FAQ"
+                },
+                changelog: {
+                    title: "Changelog",
+                    subtitle: "Learn about the latest updates and improvements of 7th Rhythm Studio",
+                    loading: "Loading changelog..."
+                },
+                footer: {
+                    description: "Making rhythm game creation easier, making community resources more accessible!",
+                    product: "Product",
+                    features: "Features",
+                    download: "Download",
+                    changelog: "Changelog",
+                    community: "Community",
+                    license: "This software uses a custom license, view License for details."
+                }
+            }
+        };
+    }
+
+    detectSystemLanguage() {
+        const browserLang = navigator.language || navigator.languages[0];
+        if (browserLang.startsWith('zh')) {
+            return 'zh';
+        }
+        return 'en'; // 默认英文
+    }
+
+    getStoredLanguage() {
+        return localStorage.getItem('language');
+    }
+
+    init() {
+        this.applyLanguage(this.currentLanguage);
+        this.bindEvents();
+        this.updateLanguageDisplay();
+    }
+
+    bindEvents() {
+        // 语言切换按钮点击
+        this.languageToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleDropdown();
+        });
+
+        // 语言选项点击
+        const languageOptions = document.querySelectorAll('.language-option');
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const lang = option.getAttribute('data-lang');
+                this.switchLanguage(lang);
+                this.hideDropdown();
+            });
+        });
+
+        // 点击外部关闭下拉菜单
+        document.addEventListener('click', () => {
+            this.hideDropdown();
+        });
+    }
+
+    toggleDropdown() {
+        const isShowing = this.languageDropdown.classList.contains('show');
+        if (isShowing) {
+            this.hideDropdown();
+        } else {
+            this.showDropdown();
+        }
+    }
+
+    showDropdown() {
+        this.languageDropdown.classList.add('show');
+        this.languageToggle.classList.add('active');
+        this.updateActiveOption();
+    }
+
+    hideDropdown() {
+        this.languageDropdown.classList.remove('show');
+        this.languageToggle.classList.remove('active');
+    }
+
+    updateActiveOption() {
+        const options = document.querySelectorAll('.language-option');
+        options.forEach(option => {
+            option.classList.remove('active');
+            if (option.getAttribute('data-lang') === this.currentLanguage) {
+                option.classList.add('active');
+            }
+        });
+    }
+
+    switchLanguage(lang) {
+        if (lang !== this.currentLanguage) {
+            this.currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            this.applyLanguage(lang);
+            this.updateLanguageDisplay();
+        }
+    }
+
+    updateLanguageDisplay() {
+        const languageNames = {
+            zh: '中文',
+            en: 'English'
+        };
+        this.languageText.textContent = languageNames[this.currentLanguage];
+    }
+
+    applyLanguage(lang) {
+        const translations = this.translations[lang];
+        if (!translations) return;
+
+        // 更新所有带有 data-i18n 属性的元素
+        const elements = document.querySelectorAll('[data-i18n]');
+        elements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const translation = this.getTranslationByKey(translations, key);
+            if (translation) {
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    element.placeholder = translation;
+                } else {
+                    element.textContent = translation;
+                }
+            }
+        });
+
+        // 更新文档标题
+        if (lang === 'zh') {
+            document.title = '7th Rhythm Studio - 节奏游戏工具集';
+        } else {
+            document.title = '7th Rhythm Studio - Rhythm Game Tools';
+        }
+
+        // 更新HTML lang属性
+        document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    }
+
+    getTranslationByKey(translations, key) {
+        const keys = key.split('.');
+        let result = translations;
+        for (const k of keys) {
+            if (result && typeof result === 'object' && k in result) {
+                result = result[k];
+            } else {
+                return null;
+            }
+        }
+        return result;
+    }
+
+    getCurrentLanguage() {
+        return this.currentLanguage;
+    }
+}
+
 // 主题切换功能
 class ThemeManager {
     constructor() {
@@ -546,6 +876,7 @@ class DownloadManager {
 
 // 初始化所有功能
 document.addEventListener('DOMContentLoaded', () => {
+    new LanguageManager();
     new ThemeManager();
     new MobileMenu();
     new ScrollManager();
