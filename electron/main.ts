@@ -76,7 +76,7 @@ function saveDownloadPath(downloadPath: string) {
 // 创建更新检查窗口
 function createUpdateWindow() {
   console.log("Creating update window...");
-  updateWin = new BrowserWindow({
+  const updateWindowOptions: any = {
     width: 400,
     height: 500,
     resizable: false,
@@ -90,7 +90,17 @@ function createUpdateWindow() {
       nodeIntegration: true,
       contextIsolation: true, // 确保上下文隔离
     },
-  })
+  }
+
+  // macOS 特殊配置
+  if (process.platform === 'darwin') {
+    updateWindowOptions.titleBarStyle = 'hiddenInset'
+    updateWindowOptions.trafficLightPosition = { x: -100, y: -100 } // 将红绿灯按钮移到窗口外
+  } else {
+    updateWindowOptions.titleBarStyle = 'hidden'
+  }
+
+  updateWin = new BrowserWindow(updateWindowOptions)
 
   if (VITE_DEV_SERVER_URL) {
     console.log("Loading update page from dev server:", VITE_DEV_SERVER_URL + "/#/update");
@@ -119,17 +129,26 @@ function createUpdateWindow() {
 
 // 创建主应用窗口
 function createWindow() {
-  win = new BrowserWindow({
+  const windowOptions: any = {
     width: 1920,
     height: 1080,
     icon: path.join(process.env.APP_ROOT, "./electron/icon.png"),
     frame: false,
-    titleBarStyle: "hidden",
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
       nodeIntegration: true,
     },
-  })
+  }
+
+  // macOS 特殊配置
+  if (process.platform === 'darwin') {
+    windowOptions.titleBarStyle = 'hiddenInset'
+    windowOptions.trafficLightPosition = { x: -100, y: -100 } // 将红绿灯按钮移到窗口外
+  } else {
+    windowOptions.titleBarStyle = 'hidden'
+  }
+
+  win = new BrowserWindow(windowOptions)
 
   // Test active push message to Renderer-process.
   win.webContents.on("did-finish-load", () => {
