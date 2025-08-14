@@ -1,4 +1,4 @@
-const appVersion = "1.0.0"
+const appVersion = "1.0.1"
 const asarVersion = "1.0.0"
 
 // 版本比较函数
