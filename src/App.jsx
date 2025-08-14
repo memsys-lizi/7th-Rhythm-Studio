@@ -217,11 +217,13 @@ function App() {
         }
       })
 
-      // 开始下载 - 使用工具ID作为文件名
+      // 开始下载 - 使用工具ID作为文件名，并传递工具名称和版本信息
       const result = await window.electronAPI.startDownload({
         downloadId,
         url: tool.downloadUrl,
         toolId: tool.id.toString(),
+        toolName: tool.toolName || tool.name, // 优先使用 toolName，回退到 name
+        toolVersion: tool.toolVersion || tool.version, // 优先使用 toolVersion，回退到 version
       })
 
       if (!result) {

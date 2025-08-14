@@ -114,12 +114,26 @@
   flex-shrink: 0;
 }
 
-.author-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.author-name-link {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
   flex: 1;
   min-width: 0;
+}
+
+.author-name-link:hover {
+  color: var(--accent-color);
+  background: var(--bg-quaternary);
+  transform: translateY(-1px);
 }
 
 /* 作者信息行的按钮组 */
@@ -163,25 +177,46 @@
   border-color: var(--accent-color);
 }
 
-.author-name {
-  font-weight: 500;
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  white-space: nowrap;
+
+
+/* 工具简介区域 */
+.tool-brief-description {
+  flex: 1;
+  min-height: 0;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px;
+  margin: 4px 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.brief-description-content {
+  flex: 1;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 限制显示3行 */
+  line-clamp: 3; /* 标准属性 */
+  -webkit-box-orient: vertical;
   text-overflow: ellipsis;
+  word-break: break-word;
+  position: relative;
 }
 
-.author-link {
-  color: var(--accent-color);
-  text-decoration: none;
-  font-size: 0.75rem;
-  transition: color 0.2s;
-  white-space: nowrap;
-}
-
-.author-link:hover {
-  color: var(--text-primary);
+.brief-description-content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 1.4em;
+  background: linear-gradient(to right, transparent, var(--bg-tertiary));
+  pointer-events: none;
 }
 
 /* 工具描述区域 */
@@ -395,6 +430,48 @@
   outline: none;
   min-width: 120px;
   font-size: 0.85rem;
+}
+
+/* 更新按钮样式 */
+.btn-update {
+  padding: 10px 16px;
+  background: linear-gradient(45deg, #ff9800, #f57c00);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 3px 8px rgba(255, 152, 0, 0.3);
+  flex: 1;
+  outline: none;
+  min-width: 100px;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.btn-update:hover {
+  background: linear-gradient(45deg, #f57c00, #e65100);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+}
+
+.btn-update:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
+}
+
+/* 更新操作容器 */
+.update-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.update-actions .local-actions {
+  display: flex;
+  gap: 8px;
 }
 
 /* 下载按钮状态样式 */
@@ -720,6 +797,7 @@
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 1; /* 改为只显示一行 */
+  line-clamp: 1; /* 标准属性 */
   -webkit-box-orient: vertical;
   overflow: hidden;
   color: var(--text-secondary);
@@ -751,6 +829,47 @@
   color: var(--success-color) !important;
   font-weight: bold;
   flex-shrink: 0; /* 防止被压缩 */
+}
+
+/* 更新徽章样式 */
+.update-badge {
+  background: rgba(255, 152, 0, 0.3) !important;
+  color: #ff9800 !important;
+  font-weight: bold;
+  flex-shrink: 0;
+  animation: pulse-update 2s infinite;
+}
+
+/* 需要更新的工具项样式 */
+.tool-item.need-update {
+  border-color: rgba(255, 152, 0, 0.5);
+  background: rgba(255, 152, 0, 0.1);
+  position: relative;
+}
+
+.tool-item.need-update::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: #ff9800;
+  border-radius: 50%;
+  animation: blink-update 1.5s infinite;
+}
+
+/* 更新提示动画 */
+@keyframes pulse-update {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+@keyframes blink-update {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 /* 无工具提示 */
@@ -1031,12 +1150,9 @@
     gap: 6px;
   }
 
-  .author-name {
+  .author-name-link {
     font-size: 0.8rem;
-  }
-
-  .author-link {
-    font-size: 0.7rem;
+    padding: 2px 3px;
   }
 
   .btn-description,
@@ -1044,6 +1160,18 @@
   .btn-back-to-doc {
     font-size: 0.65rem;
     padding: 3px 6px;
+  }
+
+  .tool-brief-description {
+    padding: 6px;
+    margin: 3px 0;
+  }
+
+  .brief-description-content {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    -webkit-line-clamp: 2; /* 移动端显示2行 */
+    line-clamp: 2; /* 标准属性 */
   }
 
   .tools-list {
@@ -1066,6 +1194,11 @@
   .tool-meta {
     flex-direction: column;
     gap: 8px;
+  }
+
+  .author-name-link {
+    font-size: 0.75rem;
+    padding: 2px 3px;
   }
 
   .author-buttons {

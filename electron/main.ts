@@ -250,6 +250,111 @@ function compareVersions(version1: string, version2: string): number {
   return 0;
 }
 
+// 工具版本信息接口
+interface ToolVersionInfo {
+  toolId: string;
+  version: string;
+  downloadDate: string;
+  toolName: string;
+  apiVersion: string;
+}
+
+// 生成工具版本信息文件
+function createToolVersionInfo(toolId: string, toolName: string, version: string): boolean {
+  try {
+    const toolPath = getToolDownloadPath(toolId);
+    const infoPath = path.join(toolPath, 'info.json');
+    
+    const versionInfo: ToolVersionInfo = {
+      toolId: toolId,
+      version: version,
+      downloadDate: new Date().toISOString(),
+      toolName: toolName,
+      apiVersion: version
+    };
+    
+    fs.writeFileSync(infoPath, JSON.stringify(versionInfo, null, 2), 'utf8');
+    console.log('Tool version info created:', infoPath);
+    return true;
+  } catch (error) {
+    console.error('Failed to create tool version info:', error);
+    return false;
+  }
+}
+
+// 读取工具版本信息
+function readToolVersionInfo(toolId: string): ToolVersionInfo | null {
+  try {
+    const toolPath = getToolDownloadPath(toolId);
+    const infoPath = path.join(toolPath, 'info.json');
+    
+    if (!fs.existsSync(infoPath)) {
+      return null;
+    }
+    
+    const content = fs.readFileSync(infoPath, 'utf8');
+    const versionInfo: ToolVersionInfo = JSON.parse(content);
+    return versionInfo;
+  } catch (error) {
+    console.error('Failed to read tool version info:', error);
+    return null;
+  }
+}
+
+// 更新工具版本信息
+function updateToolVersionInfo(toolId: string, newVersion: string, toolName: string): boolean {
+  try {
+    const existingInfo = readToolVersionInfo(toolId);
+    const toolPath = getToolDownloadPath(toolId);
+    const infoPath = path.join(toolPath, 'info.json');
+    
+    const versionInfo: ToolVersionInfo = {
+      toolId: toolId,
+      version: newVersion,
+      downloadDate: new Date().toISOString(),
+      toolName: toolName,
+      apiVersion: newVersion,
+      ...existingInfo // 保留其他可能的字段
+    };
+    
+    fs.writeFileSync(infoPath, JSON.stringify(versionInfo, null, 2), 'utf8');
+    console.log('Tool version info updated:', infoPath);
+    return true;
+  } catch (error) {
+    console.error('Failed to update tool version info:', error);
+    return false;
+  }
+}
+
+// 获取所有工具的版本信息
+function getAllToolVersions(): Record<string, ToolVersionInfo> {
+  try {
+    const basePath = getDownloadPath();
+    const toolVersions: Record<string, ToolVersionInfo> = {};
+    
+    if (!fs.existsSync(basePath)) {
+      return toolVersions;
+    }
+    
+    const entries = fs.readdirSync(basePath, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        const toolId = entry.name;
+        const versionInfo = readToolVersionInfo(toolId);
+        if (versionInfo) {
+          toolVersions[toolId] = versionInfo;
+        }
+      }
+    }
+    
+    return toolVersions;
+  } catch (error) {
+    console.error('Failed to get all tool versions:', error);
+    return {};
+  }
+}
+
 // 检查更新
 ipcMain.handle("check-update", async () => {
   try {
@@ -461,7 +566,7 @@ ipcMain.handle("get-local-files", async () => {
   }
 })
 
-ipcMain.handle("start-download", async (event, { downloadId, url, toolId, extension }) => {
+ipcMain.handle("start-download", async (event, { downloadId, url, toolId, extension, toolName, toolVersion }) => {
   try {
     if (!win) return false
 
@@ -526,6 +631,16 @@ ipcMain.handle("start-download", async (event, { downloadId, url, toolId, extens
         })
       },
     })
+
+    // 下载完成后生成版本信息文件
+    if (toolName && toolVersion) {
+      const versionCreated = createToolVersionInfo(toolId, toolName, toolVersion)
+      if (versionCreated) {
+        console.log(`Version info created for tool ${toolName} (${toolVersion})`)
+      } else {
+        console.warn(`Failed to create version info for tool ${toolName}`)
+      }
+    }
 
     // 下载完成
     win?.webContents.send("download-complete", { downloadId, filename })
@@ -881,6 +996,47 @@ ipcMain.handle("select-language-file", async () => {
   } catch (error) {
     console.error("Select language file error:", error)
     return null
+  }
+})
+
+// 工具版本信息管理 API
+// 获取单个工具的版本信息
+ipcMain.handle("get-tool-version-info", async (event, toolId) => {
+  try {
+    return readToolVersionInfo(toolId)
+  } catch (error) {
+    console.error("Get tool version info error:", error)
+    return null
+  }
+})
+
+// 获取所有工具的版本信息
+ipcMain.handle("get-all-tool-versions", async () => {
+  try {
+    return getAllToolVersions()
+  } catch (error) {
+    console.error("Get all tool versions error:", error)
+    return {}
+  }
+})
+
+// 更新工具版本信息
+ipcMain.handle("update-tool-version-info", async (event, toolId, newVersion, toolName) => {
+  try {
+    return updateToolVersionInfo(toolId, newVersion, toolName)
+  } catch (error) {
+    console.error("Update tool version info error:", error)
+    return false
+  }
+})
+
+// 比较两个版本号
+ipcMain.handle("compare-tool-versions", async (event, version1, version2) => {
+  try {
+    return compareVersions(version1, version2)
+  } catch (error) {
+    console.error("Compare tool versions error:", error)
+    return 0
   }
 })
 

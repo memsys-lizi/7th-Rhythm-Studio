@@ -103,6 +103,14 @@ contextBridge.exposeInMainWorld("electronAPI", {
     console.log("Calling finishUpdate API...");
     return ipcRenderer.invoke("finish-update");
   },
+
+  // 工具版本信息管理API
+  getToolVersionInfo: (toolId: string) => ipcRenderer.invoke("get-tool-version-info", toolId),
+  getAllToolVersions: () => ipcRenderer.invoke("get-all-tool-versions"),
+  updateToolVersionInfo: (toolId: string, newVersion: string, toolName: string) => 
+    ipcRenderer.invoke("update-tool-version-info", toolId, newVersion, toolName),
+  compareToolVersions: (version1: string, version2: string) => 
+    ipcRenderer.invoke("compare-tool-versions", version1, version2),
 })
 
 export default {}
